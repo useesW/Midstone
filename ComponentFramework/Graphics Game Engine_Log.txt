@@ -1,0 +1,9 @@
+[INFO]: Starting the GameSceneManager
+[INFO]: SceneManager Constructor
+[INFO]: OpenGL version: 4.6.0 - Build 27.20.100.9621
+[INFO]: Graphics card vendor Intel
+[INFO]: Graphics card name Intel(R) Iris(R) Plus Graphics
+[INFO]: GLSL Version 4.60 - Build 27.20.100.9621
+[INFO]: Creating Timer
+[INFO]: Created MainMenu: 
+[INFO]: Deleting the GameSceneManager
