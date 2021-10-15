@@ -26,6 +26,8 @@ private:
 	unsigned int fps;
 	bool isRunning;
 	bool fullScreen;
+	float width;
+	float height;
 	void BuildScene(SCENE_NUMBER scene_);
 };
 

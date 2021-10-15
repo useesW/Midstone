@@ -28,6 +28,10 @@ namespace  MATH {
 		static Matrix4 lookAt(const Vec3& eye, const Vec3& at, const Vec3& up);					
 		static Matrix4 transpose(const Matrix4 &m);
 		static Matrix4 inverse(const Matrix4 &m);
+
+		// Conversion Math Taken From: "https://webglfactory.blogspot.com/2011/05/how-to-convert-world-to-screen.html"
+		static Vec3 viewToWorldCoord(Vec2 mousePoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix);
+		static Vec2 worldToViewCoord(Vec3 boundsPoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix);
 	};
 
 }

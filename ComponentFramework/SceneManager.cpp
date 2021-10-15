@@ -9,7 +9,7 @@
 
 SceneManager::SceneManager(): 
 	currentScene(nullptr), window(nullptr), timer(nullptr),
-	fps(60), isRunning(false), fullScreen(true) {
+	fps(60), isRunning(false), fullScreen(false) {
 	Debug::Info("SceneManager Constructor", __FILE__, __LINE__);
 }
 
@@ -36,12 +36,14 @@ SceneManager::~SceneManager() {
 bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 
 	window = new Window();
+	width = width_;
+	height = height_;
 	
 	if (!window->OnCreate(name_, width_, height_)) {
 		Debug::FatalError("Failed to initialize Window object", __FILE__, __LINE__);
 		return false;
 	}
-	SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_FULLSCREEN);
+	SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_MINIMIZED);
 
 	timer = new Timer();
 	Debug::Info("Creating Timer", __FILE__, __LINE__);
@@ -61,6 +63,20 @@ void SceneManager::Run() {
 	isRunning = true;
 	while (isRunning) {
 		timer->UpdateFrameTicks();
+
+		// check current scene call designation to change scenes or quit game
+		switch (currentScene->callDesignation)	{
+		case -1:
+			isRunning = false;
+			break;
+		case 0:
+			BuildScene(SCENE0);
+			break;
+		case 1:
+			BuildScene(SCENE1);
+			break;
+		}
+
 		currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
 		GetEvents();
@@ -134,6 +150,12 @@ void SceneManager::BuildScene(SCENE_NUMBER scene) {
 		currentScene = nullptr;
 		break;
 	}	
+
+	if (currentScene != nullptr) {
+		currentScene->screenWidth = width;
+		currentScene->screenHeight = height;
+		currentScene->callDesignation = -100;
+	}
 }
 
 
