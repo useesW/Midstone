@@ -255,3 +255,31 @@ Matrix4 MMath::inverse(const Matrix4 &m) {
 		}
 		return inverseM;
 }
+
+Vec3 MATH::MMath::viewToWorldCoord(Vec2 mousePoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix)
+{
+	float x = 2.0 * mousePoint.x / width - 1;
+	float y = -2.0 * mousePoint.y / height + 1;
+	Matrix4 viewProjectionInverse = inverse(projectionMatrix * viewMatrix);
+
+	Vec3 r = Vec3(x, y, 0);
+	return viewProjectionInverse * r;
+}
+
+Vec2 MATH::MMath::worldToViewCoord(Vec3 boundsPoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix)
+{
+	Matrix4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+	//transform world to clipping coordinates
+	boundsPoint = viewProjectionMatrix * boundsPoint;
+	float x = ((boundsPoint.x + 1) / 2.0) * width;
+
+	//we calculate -point3D.getY() because the screen Y axis is
+	//oriented top->down 
+	float y = ((1 - boundsPoint.y) / 2.0) * height;
+	
+	Vec2 r = Vec2();
+	r.x = x;
+	r.y = y;
+	return r;
+}

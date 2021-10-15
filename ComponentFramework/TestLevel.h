@@ -22,6 +22,10 @@ private:
 
 	Camera* camera;
 	Vec3 lightSource;
+	bool menuOpen = false;
+	float timer;
+	int health; // set this to the starting health of the player
+
 
 
 

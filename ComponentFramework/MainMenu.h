@@ -8,7 +8,7 @@ using namespace MATH;
 /// Forward declarations 
 union SDL_Event;
 class Camera;
-//class UIObject
+class UIObject;
 class Mesh;
 class Shader;
 class Texture;
@@ -18,26 +18,36 @@ private:
 
 	Camera* camera;
 	Vec3 lightSource;
+	bool creditInUse = false;
 
 	#pragma region UI
-	// UIobject backbround;
-	// UIobject title;
-	// UIobject levelButton1;
-	// UIobject levelButton...;
-
-	// UI Mesh
-	Mesh* titlemeshPtr;
-	Mesh* buttonmeshPtr;
-
-	// Texture
-	Texture* titletexturePtr;
-	Texture* button1texturePtr;
-	//Texture* buttonxtexturePtr;
+	UIObject* backbround;
+	UIObject* creditMenu;
+	//UIObject* playButton;
+	//UIObject* quitButton;
+	//UIObject* creditButton;
 
 	// UI Shader
-	Shader* UIshaderPtr;
-	#pragma endregion
+	Shader* UI_shaderPtr;
 
+	// UI Mesh
+	Mesh* background_meshPtr;
+	Mesh* credit_meshPtr;
+	//Mesh* button_meshPtr;
+
+	// Texture
+	Texture* background_texturePtr;
+	Texture* credit_texturePtr;
+	//Texture* button_Play_texturePtr;
+	//Texture* button_Quit_texturePtr;
+	//Texture* button_Credit_texturePtr;
+
+	// Button Bounds
+	Vec4 button_Play_bounds;
+	Vec4 button_Quit_bounds;
+	Vec4 button_Credit_bounds;
+
+	#pragma endregion
 	
 public:
 	explicit MainMenu();
