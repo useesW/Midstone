@@ -96,10 +96,10 @@ void SceneManager::GetEvents() {
 		else if (sdlEvent.type == SDL_KEYDOWN) {
 			switch (sdlEvent.key.keysym.scancode) {
 			// Quit should open a menue not outright exit (Remove)
-			case SDL_SCANCODE_ESCAPE:
+			/*case SDL_SCANCODE_ESCAPE:
 			case SDL_SCANCODE_Q:
 				isRunning = false;
-				return;
+				return;*/
 
 			// Change fullscreen key
 			case SDL_SCANCODE_RETURN:
@@ -154,7 +154,6 @@ void SceneManager::BuildScene(SCENE_NUMBER scene) {
 	if (currentScene != nullptr) {
 		currentScene->screenWidth = width;
 		currentScene->screenHeight = height;
-		currentScene->callDesignation = -100;
 	}
 }
 

@@ -6,4 +6,4 @@
 [INFO]: GLSL Version 4.60 - Build 27.20.100.9621
 [INFO]: Creating Timer
 [INFO]: Created MainMenu: 
-[INFO]: Deleting the GameSceneManager
+[INFO]: Created MainMenu: 

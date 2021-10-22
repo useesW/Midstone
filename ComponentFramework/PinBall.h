@@ -1,5 +1,5 @@
-#ifndef UIOBJECT_H
-#define UIOBJECT_H
+#ifndef PINBALL_H
+#define PINBALL_H
 #include <glew.h>
 #include "Matrix.h"
 #include "Mesh.h"
@@ -7,21 +7,24 @@
 #include "Texture.h"
 #include "GameObject.h"
 #include "PhysicsObject.h"
+//#include "Paddle.h"
 
 using namespace MATH;
 
 // Once the module objects are created using this model, delete it
-class UIObject : public PhysicsObject, public GameObject {
+class PinBall : public PhysicsObject, public GameObject {
 
 private:
 	Matrix4 modelMatrix;
 	Mesh* mesh;
 	Shader* shader;
 	Texture* texture;
-
+	Vec2 gameboundsTemp;
+	float radius;
+	
 public:
-	UIObject(Mesh* mesh_, Shader* shader_, Texture* texture_);
-	~UIObject();
+	PinBall(Mesh* mesh_, Shader* shader_, Texture* texture_);
+	~PinBall();
 	virtual bool OnCreate();
 	virtual void OnDestroy();
 	virtual void Update(const float deltaTime_);
@@ -32,7 +35,9 @@ public:
 	inline Shader* getShader() const { return shader; }
 	inline void setModelMatrix(const Matrix4& modelMatrix_) { modelMatrix = modelMatrix_; }
 	inline const Matrix4& getModelMatrix() { return modelMatrix; }
-	inline void setTexture(Texture* texture_) { texture_ = texture; }
+	void CalculateCollisions(PinBall* balls[]);
+	inline Vec2 LineIntersection(Vec2 s1, Vec2 e1, Vec2 s2, Vec2 e2);
 };
 
 #endif
+

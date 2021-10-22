@@ -27,6 +27,69 @@ namespace  MATH {
 
 	struct Vec2 {
 		float  x, y;
+
+		/*inline void set(float x_, float y_) {
+			x = x_; y = y_;
+		}
+
+		inline Vec2() {
+			set(0, 0);
+		}
+
+		inline Vec2(float x, float y) {
+			set(x, y);
+		}
+
+		inline Vec2(const Vec2& v) {
+			set(v.x, v.y);
+		}
+
+		inline Vec2(const Vec3& v) {
+			set(v.x, v.y);
+		}
+
+		inline const Vec2 operator + (const Vec2& v) const {
+			return Vec2(x + v.x, y + v.y);
+		}
+
+		/// Add a Vec3 to itself
+		inline Vec2& operator += (const Vec2& v) {
+			x += v.x;
+			y += v.y;
+			return *this;
+		}
+
+		inline const Vec2 operator - (const Vec2& v) const {
+			return Vec2(x - v.x, y - v.y);
+		}
+
+		/// Add a Vec3 to itself
+		inline Vec2& operator -= (const Vec2& v) {
+			x -= v.x;
+			y -= v.y;
+			return *this;
+		}
+
+		inline const Vec2 operator * (const float s) const {
+			return Vec2(x * s, y * s);
+		}
+
+		inline Vec2 operator *= (const float s) {
+			x *= s;
+			y *= s;
+			return *this;
+		}
+
+		inline Vec2& operator /= (const float s) {
+			if (std::fabs(s) < VERY_SMALL) {
+				std::string errorMsg("Divide by nearly zero! ");
+				throw errorMsg;
+			}
+			
+			x /= s;
+			y /= s;
+			return *this;
+		}*/
 	};
 
 	struct Vec3 {

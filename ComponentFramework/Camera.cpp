@@ -29,4 +29,8 @@ void Camera::Render() const{
 	glUniformMatrix4fv(skybox->getShader()->getUniformID("cameraRotationMatrix"), 1, GL_FALSE, trackBall->getMatrix4());
 	skybox->Render();
 	glUseProgram(0);
+
+	
+
+	
 }
