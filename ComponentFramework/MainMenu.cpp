@@ -22,6 +22,8 @@ MainMenu::~MainMenu() {}
 
 bool MainMenu::OnCreate() {
 
+	
+
 	camera = new Camera;
 	lightSource = Vec3(5.0f, 0.0f, 0.0f);
 

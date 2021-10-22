@@ -3,7 +3,7 @@
 union SDL_Event;
 class Scene {
 public:
-	int callDesignation;
+	int callDesignation = -100;
 	/* -100 = Do Nothing
 	* -1 = Quit
 	*  0 = Main Menu

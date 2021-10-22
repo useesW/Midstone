@@ -130,6 +130,7 @@
     <ClCompile Include="Noise.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="PinBall.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Noise.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="PinBall.h" />
     <ClInclude Include="PlanetaryObject.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

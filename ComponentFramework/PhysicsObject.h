@@ -1,7 +1,9 @@
 #ifndef PHYSICSOBJECT_H
 #define PHYSICSOBJECT_H
+#include <vector>
 #include "Vector.h"
 #include "Sphere.h"
+#include "Matrix.h"
 
 using namespace MATH;
 
@@ -11,6 +13,8 @@ protected:
 	Vec3 pos, vel, accel;
 	float mass;
 	Sphere boundingSphere;
+	//Vec3 vertices[100];
+	//static std::vector<Vec3> vertices;
 	float angle, angularVel, angularAccel, rotationalI;
 public:
 	PhysicsObject();
@@ -28,7 +32,7 @@ public:
 	inline void setAngularVel(const float angularVel_) { angularVel = angularVel_; }
 	inline float getAngle() { return angle; }
 	inline void applyForce(const Vec3 force) { accel = force / mass;  }
-
+	//inline void TransformVerticies(Matrix4 transformmatrix) { for (int i = 0; i < 100; i++) { vertices[i] = transformmatrix * vertices[i]; } }
 
 };
 #endif
