@@ -1,201 +1,209 @@
+#include "TestLevel.h"
 #include <glew.h>
 #include <SDL.h>
 #include <iostream>
 #include "Debug.h"
-#include "MMath.h"
-#include "Physics.h"
 #include "ObjLoader.h"
-#include "TestLevel.h"
-#include "Camera.h"
+
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "UIObject.h"
-#include "Pinball.h"
 
-TestLevel::TestLevel() : camera(nullptr) {
+#include "Pinball.h"
+#include "Paddle.h"
+#include "Affector.h"
+#include "Goal.h"
+
+#include "UIPanel.h"
+#include "UIButton.h"
+#include "UIImage.h"
+
+TestLevel::TestLevel() {
 	camera = new Camera;
-	Debug::Info("Created MainMenu: ", __FILE__, __LINE__);
+	mydesignation = 1;
+	menuState = 4;
+	lightSource_UI = Vec3(0.0f, 0.0f, 0.0f);
+	lightSource_Ambient = Vec3(0.0f, 0.0f, 0.0f);
+	Debug::Info("Created Test Level: ", __FILE__, __LINE__);
 }
 
 TestLevel::~TestLevel() {}
 
 bool TestLevel::OnCreate() {
+	std::string name_ = "";
 
-	lightSource_UI = Vec3(0.0f, 0.0f, 0.0f);
+#pragma region UI Panel Initialization
+	Shader* PTR_Shader_Menu = new Shader("shaders/texturePhongVert.glsl", "shaders/texturePhongFrag.glsl");
+	if (PTR_Shader_Menu == nullptr) { Debug::FatalError("Couldn't create UI Shader", __FILE__, __LINE__); return false; } // Shader Initialization Check
+	if (ObjLoader::loadOBJ("meshes/UI_Mesh.obj") == false) { Debug::FatalError("Couldn't load background object", __FILE__, __LINE__); return false; }
+	Mesh* PTR_Mesh_Menu = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
 
-	#pragma region UI
-	UI_shaderPtr = new Shader("shaders/texturePhongVert.glsl", "shaders/texturePhongFrag.glsl");
-	if (UI_shaderPtr == nullptr) { Debug::FatalError("Couldn't create UI Shader", __FILE__, __LINE__); return false; } // Shader Initialization Check
+#pragma region Gameplay UI
+	Texture* PTR_Texture_Panel_Gameplay= new Texture();
+	if (PTR_Texture_Panel_Gameplay->LoadImage("textures/Menu_Credits.png") == false) { Debug::FatalError("Couldn't load Gameplay UI texture", __FILE__, __LINE__); return false; }
 
-	float BeginPlayScaleFactor = 0.46f;
-	float MenuScaleFactor = 0.46f;
+	name_ = "Gameplay_UI";
+	TransformComponent* transform_Gameplay = new TransformComponent(Vec3(0.0f, 0.0f, 0.0f), Vec3(7.4f, 4.15f, 1.0f), 0.0f, Matrix4());
+	RenderComponent* renderer_Gameplay = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Panel_Gameplay, PTR_Shader_Menu);
 
-	#pragma region Begin Play
-	// Load Begin Play Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load Begin Play object", __FILE__, __LINE__); return false; }
-	beginPlayUI_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
+	panel_Gameplay = new UIPanel(name_, false, this, transform_Gameplay, renderer_Gameplay);
+	if (panel_Gameplay == nullptr) { Debug::FatalError("Gameplay UI could not be initialized", __FILE__, __LINE__); return false; }
+#pragma endregion
 
+#pragma region Begin Play
+	Texture* PTR_Texture_Panel_BeginPlay = new Texture();
+	if (PTR_Texture_Panel_BeginPlay->LoadImage("textures/Menu_BeginPlay.png") == false) { Debug::FatalError("Couldn't load Begin Play texture", __FILE__, __LINE__); return false; }
 
-	// Load Begin Play Texture
-	beginPlayUI_texturePtr = new Texture();
-	if (beginPlayUI_texturePtr->LoadImage("textures/PauseMenuTransparent.png") == false) { Debug::FatalError("Couldn't load Begin Play texture", __FILE__, __LINE__); return false; }
+	name_ = "Main_Menu";
+	TransformComponent* transform_BeginPlay = new TransformComponent(Vec3(0.0f, 0.0f, 0.0f), Vec3(7.4f, 4.15f, 1.0f), 0.0f, Matrix4());
+	RenderComponent* renderer_BeginPlay = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Panel_BeginPlay, PTR_Shader_Menu);
 
+	panel_Menu_BeginPlay = new UIPanel(name_, true, this, transform_BeginPlay, renderer_BeginPlay);
+	if (panel_Menu_BeginPlay == nullptr) { Debug::FatalError("Background could not be initialized", __FILE__, __LINE__); return false; }
+#pragma endregion
 
-	// Asset Pointer Check
-	if (beginPlayUI_meshPtr == nullptr || beginPlayUI_texturePtr == nullptr) { Debug::FatalError("Couldn't create Begin Play assets", __FILE__, __LINE__); return false; }
+#pragma region Pause Menu
+	Texture* PTR_Texture_Panel_Pause = new Texture();
+	if (PTR_Texture_Panel_Pause->LoadImage("textures/Menu_Pause.png") == false) { Debug::FatalError("Couldn't load Pause Menu texture", __FILE__, __LINE__); return false; }
 
+	name_ = "Main_Menu";
+	TransformComponent* transform_Pause= new TransformComponent(Vec3(0.0f, 0.0f, 0.0f), Vec3(7.4f, 4.15f, 1.0f), 0.0f, Matrix4());
+	RenderComponent* renderer_Pause= new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Panel_Pause, PTR_Shader_Menu);
 
-	// Begin Play Initialization
-	beginPlayUI = new UIObject(beginPlayUI_meshPtr, UI_shaderPtr, beginPlayUI_texturePtr);
-	if (beginPlayUI == nullptr) { Debug::FatalError("Begin Play could not be initialized", __FILE__, __LINE__); return false; }
+	panel_Menu_Pause= new UIPanel(name_, false, this, transform_Pause, renderer_Pause);
+	if (panel_Menu_Pause== nullptr) { Debug::FatalError("Background could not be initialized", __FILE__, __LINE__); return false; }
+#pragma endregion
 
-	
-	beginPlayUI->setModelMatrix(MMath::scale(Vec3(16.0 * BeginPlayScaleFactor, 9.0 * BeginPlayScaleFactor, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
-	#pragma endregion
+#pragma region Win Menu
+	Texture* PTR_Texture_Panel_Win = new Texture();
+	if (PTR_Texture_Panel_Win->LoadImage("textures/Menu_Win.png") == false) { Debug::FatalError("Couldn't load Win Menu texture", __FILE__, __LINE__); return false; }
 
-	#pragma region Menu (Esc)
-	// Load Menu (Esc) Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load menu (Esc) object", __FILE__, __LINE__); return false; }
-	menu_Esc_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
+	name_ = "Main_Menu";
+	TransformComponent* transform_Win = new TransformComponent(Vec3(0.0f, 0.0f, 0.0f), Vec3(7.4f, 4.15f, 1.0f), 0.0f, Matrix4());
+	RenderComponent* renderer_Win = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Panel_Win, PTR_Shader_Menu);
 
+	panel_Menu_Win = new UIPanel(name_, false, this, transform_Win, renderer_Win);
+	if (panel_Menu_Win == nullptr) { Debug::FatalError("Background could not be initialized", __FILE__, __LINE__); return false; }
+#pragma endregion
 
-	// Load Menu (Esc) Texture
-	menu_Esc_texturePtr = new Texture();
-	if (menu_Esc_texturePtr->LoadImage("textures/PauseMenu.png") == false) { Debug::FatalError("Couldn't load menu (Esc) texture", __FILE__, __LINE__); return false; }
+#pragma region Lose Menu
+	Texture* PTR_Texture_Panel_Lose = new Texture();
+	if (PTR_Texture_Panel_Lose->LoadImage("textures/Menu_Lose.png") == false) { Debug::FatalError("Couldn't load Lose Menu texture", __FILE__, __LINE__); return false; }
 
+	name_ = "Main_Menu";
+	TransformComponent* transform_Lose = new TransformComponent(Vec3(0.0f, 0.0f, 0.0f), Vec3(7.4f, 4.15f, 1.0f), 0.0f, Matrix4());
+	RenderComponent* renderer_Lose = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Panel_Lose, PTR_Shader_Menu);
 
-	// Asset Pointer Check
-	if (menu_Esc_meshPtr == nullptr || menu_Esc_texturePtr == nullptr) { Debug::FatalError("Couldn't create menu (Esc) assets", __FILE__, __LINE__); return false; }
+	panel_Menu_Lose = new UIPanel(name_, false, this, transform_Lose, renderer_Lose);
+	if (panel_Menu_Lose == nullptr) { Debug::FatalError("Background could not be initialized", __FILE__, __LINE__); return false; }
+#pragma endregion
 
+#pragma endregion
 
-	// Menu (Esc) Initialization
-	menuUI_Esc = new UIObject(menu_Esc_meshPtr, UI_shaderPtr, menu_Esc_texturePtr);
-	if (menuUI_Esc == nullptr) { Debug::FatalError("Menu (Esc) could not be initialized", __FILE__, __LINE__); return false; }
+#pragma region Buttons
+	int arrayLegnth_ = 4;
 
-	menuUI_Esc->setModelMatrix(MMath::scale(Vec3(16.0 * MenuScaleFactor, 9.0 * MenuScaleFactor, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
-	#pragma endregion
-
-	#pragma region Menu (Win)
-	// Load Menu (Win) Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load menu (Win) object", __FILE__, __LINE__); return false; }
-	menu_Win_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
-
-
-	// Load Menu (Win) Texture
-	menu_Win_texturePtr = new Texture();
-	if (menu_Win_texturePtr->LoadImage("textures/WinMenu.png") == false) { Debug::FatalError("Couldn't load menu (Win) texture", __FILE__, __LINE__); return false; }
-
-
-	// Asset Pointer Check
-	if (menu_Win_meshPtr == nullptr || menu_Win_texturePtr == nullptr) { Debug::FatalError("Couldn't create menu (Win) assets", __FILE__, __LINE__); return false; }
-
-
-	// Menu (Win) Initialization
-	menuUI_Win = new UIObject(menu_Win_meshPtr, UI_shaderPtr, menu_Win_texturePtr);
-	if (menuUI_Win == nullptr) { Debug::FatalError("Menu (Win) could not be initialized", __FILE__, __LINE__); return false; }
-
-	menuUI_Win->setModelMatrix(MMath::scale(Vec3(16.0 * MenuScaleFactor, 9.0 * MenuScaleFactor, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
-	#pragma endregion
-
-	#pragma region Menu (Lose)
-	// Load Menu (Lose) Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load menu (Lose) object", __FILE__, __LINE__); return false; }
-	menu_Lose_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
-
-
-	// Load Menu (Lose) Texture
-	menu_Lose_texturePtr = new Texture();
-	if (menu_Lose_texturePtr->LoadImage("textures/LoseMenu.png") == false) { Debug::FatalError("Couldn't load menu (Lose) texture", __FILE__, __LINE__); return false; }
+#pragma region Pause
+	Texture* PTR_Texture_Button_Resume = new Texture();
+	Texture* PTR_Texture_Button_Replay = new Texture();
+	Texture* PTR_Texture_Button_QTM = new Texture();
+	Texture* PTR_Texture_Button_QTD = new Texture();
+	if (PTR_Texture_Button_Resume->LoadImage("textures/Button_Resume.png") == false) { Debug::FatalError("Couldn't load background texture", __FILE__, __LINE__); return false; }
+	if (PTR_Texture_Button_Replay->LoadImage("textures/Button_Replay.png") == false) { Debug::FatalError("Couldn't load background texture", __FILE__, __LINE__); return false; }
+	if (PTR_Texture_Button_QTM->LoadImage("textures/Button_QuitToMenu.png") == false) { Debug::FatalError("Couldn't load background texture", __FILE__, __LINE__); return false; }
+	if (PTR_Texture_Button_QTD->LoadImage("textures/Button_QuitToDesktop.png") == false) { Debug::FatalError("Couldn't load background texture", __FILE__, __LINE__); return false; }
 
 
-	// Asset Pointer Check
-	if (menu_Lose_meshPtr == nullptr || menu_Lose_texturePtr == nullptr) { Debug::FatalError("Couldn't create menu (Lose) assets", __FILE__, __LINE__); return false; }
+	arrayLegnth_ = 4;
+	std::string names_Pause[4] = { "Resume", "Replay", "QuitToMenu", "QuitToDesktop" };
+	// Click Bounds Direction -> Vec4( TopR +x ,  TopR +y ,  BotL -x ,   BotL -y )
+	Vec4 clickBounds_Pause[4] = {
+		Vec4(710, 279, 568, 201),
+		Vec4(711, 400, 568, 319),
+		Vec4(818, 519, 461, 440),
+		Vec4(853, 640, 425, 559) };
+	TransformComponent* transforms_Pause[4] = {
+		new TransformComponent(Vec3(0.0f, 0.3f, 1.0f), Vec3(0.1f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.1f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, -0.3f, 1.0f), Vec3(0.25f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, -0.6f, 1.0f), Vec3(0.3f,0.1f,0.1f), 0.0f, Matrix4()) };
+	RenderComponent* renderers_Pause[4] = {
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_Resume, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_Replay, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTM, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTD, PTR_Shader_Menu) };
 
+	panel_Menu_Pause->CreateButtons(arrayLegnth_, names_Pause, clickBounds_Pause, transforms_Pause, renderers_Pause);
+#pragma endregion
 
-	// Menu (Lose) Initialization
-	menuUI_Lose = new UIObject(menu_Lose_meshPtr, UI_shaderPtr, menu_Lose_texturePtr);
-	if (menuUI_Lose == nullptr) { Debug::FatalError("Menu (Lose) could not be initialized", __FILE__, __LINE__); return false; }
+#pragma region Win
+	arrayLegnth_ = 3;
+	std::string names_Win[3] = { "Replay", "QuitToMenu", "QuitToDesktop" };
+	// Click Bounds Direction -> Vec4( TopR +x ,  TopR +y ,  BotL -x ,   BotL -y )
+	Vec4 clickBounds_Win[3] = {
+		Vec4(710, 279,  568, 201),
+		Vec4(818, 399, 461, 320),
+		Vec4(852, 520, 425, 439) };
+	TransformComponent* transforms_Win[3] = {
+		new TransformComponent(Vec3(0.0f, 0.3f, 1.0f), Vec3(0.1f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.25f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, -0.3f, 1.0f), Vec3(0.3f,0.1f,0.1f), 0.0f, Matrix4()) };
+	RenderComponent* renderers_Win[3] = {
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_Replay, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTM, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTD, PTR_Shader_Menu) };
 
-	menuUI_Lose->setModelMatrix(MMath::scale(Vec3(16.0 * MenuScaleFactor, 9.0 * MenuScaleFactor, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
-	#pragma endregion
+	panel_Menu_Win->CreateButtons(arrayLegnth_, names_Win, clickBounds_Win, transforms_Win, renderers_Win);
+#pragma endregion
 
-	#pragma region Buttons
-	Esc_button_Resume_bounds = Vec4(0.123113, 0.201354, -0.123113, 0.113909);
-	Esc_button_Replay_bounds = Vec4(0.112758, 0.0770898, -0.120812, -0.00805415);
-	Esc_button_QuitToMenu_bounds = Vec4(0.231269, -0.0437226, -0.23357, -0.134619);
-	Esc_button_QuitToDesktop_bounds = Vec4(0.298004, -0.178342, -0.283046, -0.269239);
+#pragma region Lose
+	arrayLegnth_ = 3;
+	std::string names_Lose[3] = { "Replay", "QuitToMenu", "QuitToDesktop" };
+	// Click Bounds Direction -> Vec4( TopR +x ,  TopR +y ,  BotL -x ,   BotL -y )
+	Vec4 clickBounds_Lose[3] = {
+		Vec4(710, 279,  568, 201),
+		Vec4(818, 399, 461, 320),
+		Vec4(852, 520, 425, 439) };
+	TransformComponent* transforms_Lose[3] = {
+		new TransformComponent(Vec3(0.0f, 0.3f, 1.0f), Vec3(0.1f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, 0.0f, 1.0f), Vec3(0.25f,0.1f,0.1f), 0.0f, Matrix4()),
+		new TransformComponent(Vec3(0.0f, -0.3f, 1.0f), Vec3(0.3f,0.1f,0.1f), 0.0f, Matrix4()) };
+	RenderComponent* renderers_Lose[3] = {
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_Replay, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTM, PTR_Shader_Menu),
+		new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Button_QTD, PTR_Shader_Menu) };
 
-	Win_button_Replay_bounds = Vec4(0.118511, 0.170288, -0.11621, 0.0851439);
-	Win_button_QuitToMenu_bounds = Vec4(0.240474, 0.0149577, -0.226667, -0.0759392);
-	Win_button_QuitToDesktop_bounds = Vec4(0.298004, -0.147276, -0.283046, -0.237022);
+	panel_Menu_Lose->CreateButtons(arrayLegnth_, names_Lose, clickBounds_Lose, transforms_Lose, renderers_Lose);
+#pragma endregion
 
-	Lose_button_Replay_bounds = Win_button_Replay_bounds;
-	Lose_button_QuitToMenu_bounds = Win_button_QuitToMenu_bounds; 
-	Lose_button_QuitToDesktop_bounds = Win_button_QuitToDesktop_bounds;
-	#pragma endregion
+#pragma endregion
 
+#pragma region Health Bar
+	Texture* PTR_Texture_Image_Health = new Texture();
+	if (PTR_Texture_Image_Health->LoadImage("textures/heart.png") == false) { Debug::FatalError("Couldn't load healthUI texture", __FILE__, __LINE__); return false; }
 
-	#pragma region Health Bar
-	// Load Health UI Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load healthUI object", __FILE__, __LINE__); return false; }
-	healthUI_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
+	const float healthBarOffset = 0.1f;
+	float currentOffset = -0.5f;
 
-
-	// Load Health UI Texture
-	healthUI_texturePtr = new Texture();
-	if (healthUI_texturePtr->LoadImage("textures/heart.png") == false) { Debug::FatalError("Couldn't load healthUI texture", __FILE__, __LINE__); return false; }
-
-
-	// Asset Pointer Check
-	if (healthUI_meshPtr == nullptr || healthUI_texturePtr == nullptr) { Debug::FatalError("Couldn't create healthUI assets", __FILE__, __LINE__); return false; }
-
-	// Health UI Initialization
-	const float healthBarOffset = 0.6f;
-	float currentOffset = -7.0f;
+	std::string names_Image_Health[maxHealth] = {};
+	TransformComponent* transforms_Image_Health[maxHealth] = {};
+	RenderComponent* renderers_Image_Health[maxHealth] = {};
 
 	for (int i = 0; i < maxHealth; i++) {
-		healthUI[i] = new UIObject(healthUI_meshPtr, UI_shaderPtr, healthUI_texturePtr);
-
-		if (healthUI[i] == nullptr) {
-			Debug::FatalError("healthUI [" + std::to_string(i) + "] could not be initialized", __FILE__, __LINE__); return false;
-		}
-
-		healthUI[i]->setModelMatrix(
-			// ***CHANGE Y & Z COMPONENTS * **
-			MMath::translate(Vec3(currentOffset, -3.8f, 0.f)) * // Iterates on offset to make sure health icons are spaced apart
-			MMath::scale(Vec3(0.3f, 0.3f, 1.0)) * // Identical scales for each
-			MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f))); // face the camera
-
+		names_Image_Health[i] = ("Health_Icon" + std::to_string(i));
+		transforms_Image_Health[i] = new TransformComponent(Vec3(currentOffset, -0.7f, 1.f), Vec3(0.05f, 0.07f, 1.0), 0.0f, Matrix4());
+		renderers_Image_Health[i] = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Image_Health, PTR_Shader_Menu);
 		currentOffset += healthBarOffset;
 	}
+	panel_Gameplay->CreateImages(maxHealth, names_Image_Health, transforms_Image_Health, renderers_Image_Health);
+#pragma endregion
 
-	#pragma endregion
-
-	//return true;
-
-	#pragma region Time Display
-	// Load Time UI Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load timeUI object", __FILE__, __LINE__); return false; }
-	timeUI_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
-
-
+#pragma region Time Display
 	// Load Health UI Texture
 	for (int i = 0; i < 10; i++) {
-		timeUI_texturePtr[i] = new Texture();
-		if (timeUI_texturePtr[i]->LoadImage(("textures/number" + std::to_string(i) + ".jpg").c_str()) == false) { Debug::FatalError("Couldn't load timeUI #" + std::to_string(i) + " texture", __FILE__, __LINE__); return false; }
-		
-		//Remove once number images are added to project
-		//if (timeUI_texturePtr[i]->LoadImage("textures/MenuPage.png") == false) { Debug::FatalError("Couldn't load timeUI #" + std::to_string(i) + " texture", __FILE__, __LINE__); return false; }
+		PTRs_Textures_Time[i] = new Texture();
+		if (PTRs_Textures_Time[i]->LoadImage(("textures/Number_" + std::to_string(i) + ".png").c_str()) == false) { Debug::FatalError("Couldn't load timeUI #" + std::to_string(i) + " texture", __FILE__, __LINE__); return false; }
 	}
-
-
-	// Asset Pointer Check
-	if (timeUI_meshPtr == nullptr || timeUI_texturePtr[0] == nullptr) { Debug::FatalError("Couldn't create timeUI assets", __FILE__, __LINE__); return false; }
-
-	// Time UI Initialization
-	const float timeBarOffset = 0.9f;
-	currentOffset = 4.2f;
 	
 	#pragma region Time Texture Sequence
 	int sec = ((int)timeremaining % 60);
@@ -210,106 +218,143 @@ bool TestLevel::OnCreate() {
 	int t[4] = { x,y,z,w };
 	#pragma endregion
 
-	
+	// Time UI Initialization
+	const float timeBarOffset = 0.1f;
+	currentOffset = 4.2f;
+
+	std::string names_Image_Time[4] = {};
+	TransformComponent* transforms_Image_Time[4] = {};
+	RenderComponent* renderers_Image_Time[4] = {};
 
 	for (int i = 0; i < 4; i++) {
 		int j = t[i];
-		//std::cout << j << ",";
-		timeUI[i] = new UIObject(timeUI_meshPtr, UI_shaderPtr, timeUI_texturePtr[j]);
-
-		if (timeUI[i] == nullptr) {
-			std::string Elog = "timeUI [";	Elog += i;	Elog += "] could not be initialized";
-			Debug::FatalError(Elog, __FILE__, __LINE__); return false;
-		}
-
-		timeUI[i]->setModelMatrix(
-			// ***CHANGE Y & Z COMPONENTS * **
-			MMath::translate(Vec3(currentOffset, -3.7f, 0.f)) * // Iterates on offset to make sure health icons are spaced apart
-			MMath::scale(Vec3(0.4f, 0.4f, 1.0)) * // Identical scales for each
-			MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f))); // face the camera
-
+		names_Image_Health[i] = ("Time_Icon" + std::to_string(i));
+		transforms_Image_Health[i] = new TransformComponent(Vec3(currentOffset, 0.0f, 1.f), Vec3(0.05f, 0.07f, 1.0), 0.0f, Matrix4());
+		renderers_Image_Health[i] = new RenderComponent(PTR_Mesh_Menu, PTR_Texture_Image_Health, PTR_Shader_Menu);
 		currentOffset += timeBarOffset;
 	}
-	#pragma endregion
-
-	#pragma endregion
-
+	//panel_Gameplay->CreateImages(4, names_Image_Time, transforms_Image_Time, renderers_Image_Time);
+#pragma endregion
 
 	#pragma region Entities
 	
 	#pragma region Balls
-	// Load PinBall Mesh
-	if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load PinBall object", __FILE__, __LINE__); return false; }
-	ball_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
+	//// Load PinBall Mesh
+	//if (ObjLoader::loadOBJ("meshes/Menu_Background.obj") == false) { Debug::FatalError("Couldn't load PinBall object", __FILE__, __LINE__); return false; }
+	//ball_meshPtr = new Mesh(GL_TRIANGLES, ObjLoader::vertices, ObjLoader::normals, ObjLoader::uvCoords);
+	//
+	//// Load PinBall Texture
+	//ball_texturePtr = new Texture();
+	//if (ball_texturePtr->LoadImage("textures/Ball.png") == false) { Debug::FatalError("Couldn't load PinBall texture", __FILE__, __LINE__); return false; }
+
+
+	//// Asset Pointer Check
+	//if (ball_meshPtr == nullptr || ball_texturePtr == nullptr) { Debug::FatalError("Couldn't create PinBall assets", __FILE__, __LINE__); return false; }
+
+	//// PinBall Initialization
+
+	//Vec3 randpos[] = {Vec3(0,0,0), Vec3(2,2,0),Vec3(-2,1,0) ,Vec3(3,2,0) ,Vec3(-1,-3,0) };
+	//Vec3 randvel[] = {Vec3(0.1,0.5,0), Vec3(0.2,0.1,0),Vec3(0.7,0.3,0) ,Vec3(0.3,0.4,0) ,Vec3(0.1,0.3,0) };
+
+	///*for (int i = 0; i < health; i++) {
+	//	balls[i] = new PinBall(ball_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.15f);
+	//	if (balls[i] == nullptr) {
+	//		Debug::FatalError("PinBall [" + std::to_string(i) + "] could not be initialized", __FILE__, __LINE__); return false;
+	//	}
+
+	//	balls[i]->setPos(randpos[i]);
+	//	balls[i]->setVel(randvel[i]);
+	//}*/
+
+	#pragma endregion
+
+	#pragma endregion
+
+
+#pragma region Garbage Collection
 	
-	// Load PinBall Texture
-	ball_texturePtr = new Texture();
-	if (ball_texturePtr->LoadImage("textures/CreditButton.png") == false) { Debug::FatalError("Couldn't load PinBall texture", __FILE__, __LINE__); return false; }
-
-
-	// Asset Pointer Check
-	if (ball_meshPtr == nullptr || ball_texturePtr == nullptr) { Debug::FatalError("Couldn't create PinBall assets", __FILE__, __LINE__); return false; }
-
-	// PinBall Initialization
-
-	Vec3 randpos[] = {Vec3(0,0,0), Vec3(2,2,0),Vec3(-2,1,0) ,Vec3(3,2,0) ,Vec3(-1,-3,0) };
-	Vec3 randvel[] = {Vec3(0.1,0.5,0), Vec3(0.2,0.1,0),Vec3(0.7,0.3,0) ,Vec3(0.3,0.4,0) ,Vec3(0.1,0.3,0) };
-
-	for (int i = 0; i < maxHealth; i++) {
-		balls[i] = new PinBall(ball_meshPtr, UI_shaderPtr, ball_texturePtr);
-		if (balls[i] == nullptr) {
-			Debug::FatalError("PinBall [" + std::to_string(i) + "] could not be initialized", __FILE__, __LINE__); return false;
-		}
-
-		balls[i]->setPos(randpos[i]);
-		balls[i]->setVel(randvel[i]);
-	}
-	#pragma endregion
-
-	#pragma endregion
-
-
-	#pragma region Garbage Collection
-	// There Is More
-	//delete t;
-	#pragma endregion
+#pragma endregion
 
 	return true;
 }
 
-
-
 void TestLevel::Update(const float deltaTime) {
-	//std::cout << menuState << "\n";
+	switch (menuState) {
+	case 0:
+		if (!panel_Gameplay->getIsRendered()) { panel_Gameplay->setIsRendered(true); }
+
+		if (panel_Menu_BeginPlay->getIsRendered()) { panel_Menu_BeginPlay->setIsRendered(false); }
+		if (panel_Menu_Pause->getIsRendered()) { panel_Menu_Pause->setIsRendered(false); }
+		if (panel_Menu_Win->getIsRendered()) { panel_Menu_Win->setIsRendered(false); }
+		if (panel_Menu_Lose->getIsRendered()) { panel_Menu_Lose->setIsRendered(false); }
+		break;
+	case 1:
+		if (!panel_Menu_Pause->getIsRendered()) { panel_Menu_Pause->setIsRendered(true); }
+
+		if (panel_Gameplay->getIsRendered()) { panel_Gameplay->setIsRendered(false); }
+		if (panel_Menu_BeginPlay->getIsRendered()) { panel_Menu_BeginPlay->setIsRendered(false); }
+		if (panel_Menu_Win->getIsRendered()) { panel_Menu_Win->setIsRendered(false); }
+		if (panel_Menu_Lose->getIsRendered()) { panel_Menu_Lose->setIsRendered(false); }
+		break;
+	case 2:
+		if (!panel_Menu_Win->getIsRendered()) { panel_Menu_Win->setIsRendered(true); }
+
+		if (panel_Gameplay->getIsRendered()) { panel_Gameplay->setIsRendered(false); }
+		if (panel_Menu_BeginPlay->getIsRendered()) { panel_Menu_BeginPlay->setIsRendered(false); }
+		if (panel_Menu_Pause->getIsRendered()) { panel_Menu_Pause->setIsRendered(false); }
+		if (panel_Menu_Lose->getIsRendered()) { panel_Menu_Lose->setIsRendered(false); }
+		break;
+	case 3:
+		if (!panel_Menu_Lose->getIsRendered()) { panel_Menu_Lose->setIsRendered(true); }
+
+		if (panel_Gameplay->getIsRendered()) { panel_Gameplay->setIsRendered(false); }
+		if (panel_Menu_BeginPlay->getIsRendered()) { panel_Menu_BeginPlay->setIsRendered(false); }
+		if (panel_Menu_Pause->getIsRendered()) { panel_Menu_Pause->setIsRendered(false); }
+		if (panel_Menu_Win->getIsRendered()) { panel_Menu_Win->setIsRendered(false); }
+		break;
+	case 4:
+		if (!panel_Menu_BeginPlay->getIsRendered()) { panel_Menu_BeginPlay->setIsRendered(true); }
+
+		if (panel_Gameplay->getIsRendered()) { panel_Gameplay->setIsRendered(false); }
+		if (panel_Menu_Pause->getIsRendered()) { panel_Menu_Pause->setIsRendered(false); }
+		if (panel_Menu_Win->getIsRendered()) { panel_Menu_Win->setIsRendered(false); }
+		if (panel_Menu_Lose->getIsRendered()) { panel_Menu_Lose->setIsRendered(false); }
+		break;
+	}
+
 	if (menuState == 0) { // If A Menu Is Open, The Game Is Paused (No Entity Updates)
-		// Update all entites
-		//std::cout << "Start Collision Calculations For Balls __________________________________________________________________________________________________ \n";
 		for (int i = 0; i < health; i++) { 
-			/*std::cout << "Start Collision Calculations For Ball: " << i << "--------------------------------------------------------------\n";
-			balls[i]->CalculateCollisions(balls);
-			std::cout << "End Collision Calculations For Ball: " << i << "--------------------------------------------------------------\n";*/
-
-			balls[i]->Update(deltaTime); 
-			// std::cout << balls[i]->getPos().x << "'" << balls[i]->getPos().x << "\n";
+			//balls[i]->CalculateCollisions(balls);
+			//balls[i]->Update(deltaTime); 
 		}
-		//std::cout << "End Collision Calculations For Balls __________________________________________________________________________________________________ \n";
 
-		UpdateTime(deltaTime);
+		//UpdateTime(deltaTime);
 	}
 }
 
-
 void TestLevel::UpdateHealth(int diff) {
+	std::cout << "Update Health" << std::endl;
+
 	health = (health + diff > maxHealth)? maxHealth: health + diff; // cap health to max
 
 	// Game State Check (Health). Open Game Over Menu
 	if (health < 0) { menuState = 3; }
+
+	std::string imageEnabled_Health[maxHealth] = {};
+	for (int i = 0; i < maxHealth; i++) {
+		if(i < health){
+			imageEnabled_Health[i] = ("Health_Icon" + std::to_string(i));
+		} else {
+			imageEnabled_Health[i] = "";
+		}
+	}
+	panel_Gameplay->EnableImageGroup("Health_Icon", imageEnabled_Health, maxHealth);
 }
 
 void TestLevel::UpdateTime(const float deltaTime) {
 	timeremaining -= deltaTime;
-
-	#pragma region Time Texture Sequence Asign
+	
+#pragma region Time Texture Sequence Asign
 	int sec = ((int)round(timeremaining) % 60);
 	int min = (((int)round(timeremaining) - sec) / 60);
 	int x = 0; int y = 0; int z = 0; int w = 0;
@@ -328,15 +373,15 @@ void TestLevel::UpdateTime(const float deltaTime) {
 	//std::cout << "-----------------------------------------------------" << "\n";
 
 
-
 	for (int i = 0; i < 4; i++) {
 		int j = t[i];
-		Matrix4 tempMat = timeUI[i]->getModelMatrix();
-		timeUI[i] = new UIObject(timeUI_meshPtr, UI_shaderPtr, timeUI_texturePtr[j]);
-		timeUI[i]->setModelMatrix(tempMat);
+		for (int k = 0; k < panel_Gameplay->imageArraylegnth; k++) {
+			if (panel_Gameplay->images[k].getName() == ("Time_Icon" + std::to_string(i))) {
+				panel_Gameplay->images[k].setTexture(PTRs_Textures_Time[j]);
+			}
+		}
 	}
-	#pragma endregion
-
+#pragma endregion
 
 	// Game State Check (Time). Open Game Over Menu
 	if (timeremaining <= 0.0f) { menuState = 3; }
@@ -344,19 +389,30 @@ void TestLevel::UpdateTime(const float deltaTime) {
 }
 
 void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
-	
-	#pragma region Debug
+#pragma region Debug
 	SDL_Event event = sdlEvent;
 	if (SDL_PollEvent(&event) == 1) {
-		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_E) { menuState = 1; }
-		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) { menuState = 2; }
-		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_L) { menuState = 3; }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_0) { menuState = 0; }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_1) { menuState = 1; }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_2) { menuState = 2; }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_3) { menuState = 3; }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_4) { menuState = 4; }
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_EQUALS) { UpdateHealth(1); }
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_MINUS) { UpdateHealth(-1); }
 	}
-	#pragma endregion
+#pragma endregion
 
+	if (sdlEvent.type == SDL_EventType::SDL_MOUSEBUTTONDOWN) { // Debug Mouse Coord On Click
+		//Vec2 mouseCoords = Vec2(); mouseCoords.x = sdlEvent.button.x; mouseCoords.y = sdlEvent.button.y;
+		//std::cout << "Mouse Coords vec2( " << mouseCoords.x << ", " << mouseCoords.y << ") \n";
 
+		panel_Gameplay->HandleEvents(sdlEvent);
+		panel_Menu_BeginPlay->HandleEvents(sdlEvent);
+		panel_Menu_Pause->HandleEvents(sdlEvent);
+		panel_Menu_Win->HandleEvents(sdlEvent);
+		panel_Menu_Lose->HandleEvents(sdlEvent);
+	}
+	
 
 	#pragma region Begin Play
 	if (menuState == 4 && (sdlEvent.key.keysym.scancode == SDL_SCANCODE_SPACE)) {
@@ -366,79 +422,79 @@ void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 	#pragma endregion
 
 	#pragma region Menus
-	// If ((The Esc Key is Pushed) && The No Menu Is Open)? Open Esc Menu : Otherwise (If Esc Menu Is Open)? Close Esc Menu : Otherwise Leave Current Menu Open (This Way, You Don't close The Win/Lose Menu)     
-	menuState = (sdlEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE) ? (menuState == 0)? 1 : (menuState == 1)? 0: menuState : menuState;
-	/*if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
-		if (menuState == 0) {
-			menuState = 1;
-		}
-		else if (menuState == 1) {
-			menuState = 0;
-		}
-	}*/
-	
+	//// If ((The Esc Key is Pushed) && The No Menu Is Open)? Open Esc Menu : Otherwise (If Esc Menu Is Open)? Close Esc Menu : Otherwise Leave Current Menu Open (This Way, You Don't close The Win/Lose Menu)     
+	//menuState = (sdlEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE) ? (menuState == 0)? 1 : (menuState == 1)? 0: menuState : menuState;
+	///*if (sdlEvent.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+	//	if (menuState == 0) {
+	//		menuState = 1;
+	//	}
+	//	else if (menuState == 1) {
+	//		menuState = 0;
+	//	}
+	//}*/
+	//
 
-	// Menu Interaction
-	if (sdlEvent.type == SDL_EventType::SDL_MOUSEBUTTONDOWN && menuState != 0) {
+	//// Menu Interaction
+	//if (sdlEvent.type == SDL_EventType::SDL_MOUSEBUTTONDOWN && menuState != 0) {
 
-		Vec2 mouseCoords = Vec2(); mouseCoords.x = sdlEvent.button.x; mouseCoords.y = sdlEvent.button.y;
-		Vec3 StoP = MMath::viewToWorldCoord(mouseCoords, screenWidth, screenHeight, camera->getProjectionMatrix(), camera->getViewMatrix());
-		//std::cout << "Mouse Coords vec2( " << mouseCoords.x << ", " << mouseCoords.y << ") |    |" << "World Coords vec3( " << StoP.x << ", " << StoP.y << ", " << StoP.z << " ) \n";
-		
-		// Check which button, if any, the cousor is on
-		int buttonPressed = 0;
+	//	Vec2 mouseCoords = Vec2(); mouseCoords.x = sdlEvent.button.x; mouseCoords.y = sdlEvent.button.y;
+	//	Vec3 StoP = MMath::viewToWorldCoord(mouseCoords, screenWidth, screenHeight, camera->getProjectionMatrix(), camera->getViewMatrix());
+	//	//std::cout << "Mouse Coords vec2( " << mouseCoords.x << ", " << mouseCoords.y << ") |    |" << "World Coords vec3( " << StoP.x << ", " << StoP.y << ", " << StoP.z << " ) \n";
+	//	
+	//	// Check which button, if any, the cousor is on
+	//	int buttonPressed = 0;
 
-		switch (menuState) {
-		case 1:
-			if		(StoP.x <= Esc_button_Resume_bounds.x		 && StoP.y <= Esc_button_Resume_bounds.y		&& StoP.x >= Esc_button_Resume_bounds.z		   && StoP.y >= Esc_button_Resume_bounds.w		 ) { buttonPressed = 1; }
-			else if (StoP.x <= Esc_button_Replay_bounds.x		 && StoP.y <= Esc_button_Replay_bounds.y		&& StoP.x >= Esc_button_Replay_bounds.z		   && StoP.y >= Esc_button_Replay_bounds.w		 ) { buttonPressed = 2; }
-			else if (StoP.x <= Esc_button_QuitToMenu_bounds.x	 && StoP.y <= Esc_button_QuitToMenu_bounds.y	&& StoP.x >= Esc_button_QuitToMenu_bounds.z	   && StoP.y >= Esc_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
-			else if (StoP.x <= Esc_button_QuitToDesktop_bounds.x && StoP.y <= Esc_button_QuitToDesktop_bounds.y && StoP.x >= Esc_button_QuitToDesktop_bounds.z && StoP.y >= Esc_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+	//	switch (menuState) {
+	//	case 1:
+	//		if		(StoP.x <= Esc_button_Resume_bounds.x		 && StoP.y <= Esc_button_Resume_bounds.y		&& StoP.x >= Esc_button_Resume_bounds.z		   && StoP.y >= Esc_button_Resume_bounds.w		 ) { buttonPressed = 1; }
+	//		else if (StoP.x <= Esc_button_Replay_bounds.x		 && StoP.y <= Esc_button_Replay_bounds.y		&& StoP.x >= Esc_button_Replay_bounds.z		   && StoP.y >= Esc_button_Replay_bounds.w		 ) { buttonPressed = 2; }
+	//		else if (StoP.x <= Esc_button_QuitToMenu_bounds.x	 && StoP.y <= Esc_button_QuitToMenu_bounds.y	&& StoP.x >= Esc_button_QuitToMenu_bounds.z	   && StoP.y >= Esc_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
+	//		else if (StoP.x <= Esc_button_QuitToDesktop_bounds.x && StoP.y <= Esc_button_QuitToDesktop_bounds.y && StoP.x >= Esc_button_QuitToDesktop_bounds.z && StoP.y >= Esc_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 
-			break;
-		case 2:
-			if      (StoP.x <= Win_button_Replay_bounds.x		 && StoP.y <= Win_button_Replay_bounds.y		&& StoP.x >= Win_button_Replay_bounds.z		   && StoP.y >= Win_button_Replay_bounds.w		 ) { buttonPressed = 2; }
-			else if (StoP.x <= Win_button_QuitToMenu_bounds.x	 && StoP.y <= Win_button_QuitToMenu_bounds.y	&& StoP.x >= Win_button_QuitToMenu_bounds.z	   && StoP.y >= Win_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
-			else if (StoP.x <= Win_button_QuitToDesktop_bounds.x && StoP.y <= Win_button_QuitToDesktop_bounds.y && StoP.x >= Win_button_QuitToDesktop_bounds.z && StoP.y >= Win_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+	//		break;
+	//	case 2:
+	//		if      (StoP.x <= Win_button_Replay_bounds.x		 && StoP.y <= Win_button_Replay_bounds.y		&& StoP.x >= Win_button_Replay_bounds.z		   && StoP.y >= Win_button_Replay_bounds.w		 ) { buttonPressed = 2; }
+	//		else if (StoP.x <= Win_button_QuitToMenu_bounds.x	 && StoP.y <= Win_button_QuitToMenu_bounds.y	&& StoP.x >= Win_button_QuitToMenu_bounds.z	   && StoP.y >= Win_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
+	//		else if (StoP.x <= Win_button_QuitToDesktop_bounds.x && StoP.y <= Win_button_QuitToDesktop_bounds.y && StoP.x >= Win_button_QuitToDesktop_bounds.z && StoP.y >= Win_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 
-			break;
-		case 3:
-			if		(StoP.x <= Lose_button_Replay_bounds.x		  && StoP.y <= Lose_button_Replay_bounds.y		  && StoP.x >= Lose_button_Replay_bounds.z		  && StoP.y >= Lose_button_Replay_bounds.w		 ) { buttonPressed = 2; }
-			else if (StoP.x <= Lose_button_QuitToMenu_bounds.x	  && StoP.y <= Lose_button_QuitToMenu_bounds.y	  && StoP.x >= Lose_button_QuitToMenu_bounds.z	  && StoP.y >= Lose_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
-			else if (StoP.x <= Lose_button_QuitToDesktop_bounds.x && StoP.y <= Lose_button_QuitToDesktop_bounds.y && StoP.x >= Lose_button_QuitToDesktop_bounds.z && StoP.y >= Lose_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+	//		break;
+	//	case 3:
+	//		if		(StoP.x <= Lose_button_Replay_bounds.x		  && StoP.y <= Lose_button_Replay_bounds.y		  && StoP.x >= Lose_button_Replay_bounds.z		  && StoP.y >= Lose_button_Replay_bounds.w		 ) { buttonPressed = 2; }
+	//		else if (StoP.x <= Lose_button_QuitToMenu_bounds.x	  && StoP.y <= Lose_button_QuitToMenu_bounds.y	  && StoP.x >= Lose_button_QuitToMenu_bounds.z	  && StoP.y >= Lose_button_QuitToMenu_bounds.w	 ) { buttonPressed = 3; }
+	//		else if (StoP.x <= Lose_button_QuitToDesktop_bounds.x && StoP.y <= Lose_button_QuitToDesktop_bounds.y && StoP.x >= Lose_button_QuitToDesktop_bounds.z && StoP.y >= Lose_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 
-			break;
-		default:
-			break;
-		}
-		
-		// Change Current Call Designation To Have The Scene Manager Change Scene
-		// See Line 67 In SceneManager
-		switch (buttonPressed) {
-		case 0:
-			std::cout << "No Button Pressed" << "\n";
-			break;
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//	
+	//	// Change Current Call Designation To Have The Scene Manager Change Scene
+	//	// See Line 67 In SceneManager
+	//	switch (buttonPressed) {
+	//	case 0:
+	//		std::cout << "No Button Pressed" << "\n";
+	//		break;
 
-		case 1:
-			std::cout << "Resume" << "\n";
-			menuState = 0;
-			break;
+	//	case 1:
+	//		std::cout << "Resume" << "\n";
+	//		menuState = 0;
+	//		break;
 
-		case 2:
-			std::cout << "Replay" << "\n";
-			callDesignation = myDesignation;
-			break;
+	//	case 2:
+	//		std::cout << "Replay" << "\n";
+	//		callDesignation = myDesignation;
+	//		break;
 
-		case 3:
-			std::cout << "Quit To Menu" << "\n";
-			callDesignation = 0;
-			break;
-		case 4:
-			std::cout << "Quit To Desktop" << "\n";
-			callDesignation = -1;
-			break;
-		}
-	}
+	//	case 3:
+	//		std::cout << "Quit To Menu" << "\n";
+	//		callDesignation = 0;
+	//		break;
+	//	case 4:
+	//		std::cout << "Quit To Desktop" << "\n";
+	//		callDesignation = -1;
+	//		break;
+	//	}
+	//}
 	#pragma endregion
 
 	#pragma region Paddle
@@ -477,65 +533,53 @@ void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 }
 
 void TestLevel::Render() const {
-	/// Clear the screen
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 1.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
 
-	// Draw Scene
 	#pragma region UI Render
-	GLuint Program_Menu = menuUI_Esc->getShader()->getProgram();
+	GLuint Program_Menu = panel_Menu_Pause->getShader()->getProgram();
 	glUseProgram(Program_Menu);
 
-	glUniformMatrix4fv(menuUI_Esc->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
-	glUniformMatrix4fv(menuUI_Esc->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
-	glUniform3fv(menuUI_Esc->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
+	glUniformMatrix4fv(panel_Menu_Pause->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
+	glUniformMatrix4fv(panel_Menu_Pause->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
+	glUniform3fv(panel_Menu_Pause->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
 
-	// Render Opened Menu, If Any
-	switch (menuState) {
-	case 1:
-		menuUI_Esc->Render();
-		break;
-	case 2:
-		menuUI_Win->Render();
-		break;
-	case 3:
-		menuUI_Lose->Render();
-		break;
-	case 4:
-		beginPlayUI->Render();
-		break;
-	default:
-		break;
-	}
+	panel_Gameplay->Render();
+	panel_Menu_BeginPlay->Render();
+	panel_Menu_Pause->Render();
+	panel_Menu_Win->Render();
+	panel_Menu_Lose->Render();
 
-	// Renders same number of icons as health. Starts at index=0 so health bar moves from left to right
-	// [] [] [] :: ::  <- health = 3/5
-	for (int i = 0; i < health; i++) {
-		healthUI[i]->Render();
-	}
-	for (int i = 0; i < 4; i++) {
-		timeUI[i]->Render();
-	}
+	//if (menuState == 0) {
+	//	// Renders same number of icons as health. Starts at index=0 so health bar moves from left to right
+	//	// [] [] [] :: ::  <- health = 3/5
+	//	for (int i = 0; i < health; i++) {
+	//		healthUI[i]->Render();
+	//	}
+	//	for (int i = 0; i < 4; i++) {
+	//		timeUI[i]->Render();
+	//	}
+	//}
 	#pragma endregion
 
 	#pragma region Entitiy Render
-	GLuint Program_Entity = balls[0]->getShader()->getProgram();
-	glUseProgram(Program_Entity);
+	/*if (menuState == 0) {
+		GLuint Program_Entity = balls[0]->getShader()->getProgram();
+		glUseProgram(Program_Entity);
 
-	glUniformMatrix4fv(balls[0]->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
-	glUniformMatrix4fv(balls[0]->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
-	glUniform3fv(balls[0]->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
+		glUniformMatrix4fv(balls[0]->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
+		glUniformMatrix4fv(balls[0]->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
+		glUniform3fv(balls[0]->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
 
-	for (int i = 0; i < maxHealth; i++) { balls[i]->Render(); }
-
+		for (int i = 0; i < maxHealth; i++) { balls[i]->Render(); }
+	}*/
 	#pragma endregion
 
 	glUseProgram(0);
 }
-
 
 void TestLevel::OnDestroy() {
 	//if (meshPtr) delete meshPtr, meshPtr = nullptr;

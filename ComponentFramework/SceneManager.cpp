@@ -4,6 +4,7 @@
 #include "Window.h"
 #include "MainMenu.h"
 #include "TestLevel.h"
+#include "CollisionTestLevel.h"
 
 
 
@@ -140,6 +141,10 @@ void SceneManager::BuildScene(SCENE_NUMBER scene) {
 
 	case SCENE1:
 		currentScene = new TestLevel();
+		status = currentScene->OnCreate();
+		break;
+	case SCENE2:
+		currentScene = new CollisionTestLevel();
 		status = currentScene->OnCreate();
 		break;
 

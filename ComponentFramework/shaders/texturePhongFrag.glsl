@@ -22,6 +22,8 @@ void main() {
 		spec = pow(spec,14.0);
 	}
 	
+	if(textureColor.a < 0.1){discard;}
+
 	fragColor =  ambientColor + (diff * textureColor) + (spec * specLightColor);
 } 
 
