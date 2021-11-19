@@ -13,171 +13,285 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Math">
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{2823a1d0-8293-427f-b13d-d2a8aa26536a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\~ Helpers">
+      <UniqueIdentifier>{79d90424-1208-4716-984d-9f6cd9bca7a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\~ Unused">
+      <UniqueIdentifier>{1dfb2b1e-fea8-4481-bbf0-4489659e797e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\- Math">
       <UniqueIdentifier>{515eac11-7897-4350-9f7c-2931eaf614aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Math">
-      <UniqueIdentifier>{eea0ba70-f252-42d8-a6e0-1d3744c4eb1c}</UniqueIdentifier>
+    <Filter Include="Header Files\! Managers">
+      <UniqueIdentifier>{db579402-8701-4622-ae28-74a1dbb86b0b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Scenes">
+    <Filter Include="Header Files\! Scenes">
       <UniqueIdentifier>{252de02d-6b89-41ec-b372-ddfef9870bbe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Scenes">
+    <Filter Include="Header Files\%2a Entities">
+      <UniqueIdentifier>{e108200e-b549-437e-8093-938826061028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\! Used">
+      <UniqueIdentifier>{e4c8bb00-6652-4eac-9c76-e748440bb04a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\- Math">
+      <UniqueIdentifier>{eea0ba70-f252-42d8-a6e0-1d3744c4eb1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\! Managers">
+      <UniqueIdentifier>{58959f2d-516b-4d30-8ced-9250b380e80f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\%2a Entities">
+      <UniqueIdentifier>{9932ca80-e932-42af-bfaf-c6f77582eb24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\%2a Object Classes">
+      <UniqueIdentifier>{bce39a23-f745-4bac-a6bf-5abc9a3a6c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\! Scenes">
       <UniqueIdentifier>{e8c82a08-d757-47ee-b6fe-eee59a99570f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\%2a UI Elements">
+      <UniqueIdentifier>{3e26027e-d069-497d-9e72-bb6ed10fd373}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\~ Helpers">
+      <UniqueIdentifier>{d8a5a632-8d17-4360-bc22-644917226af3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\~ Unused">
+      <UniqueIdentifier>{20c23dfa-fa89-4796-b6df-e723bbd03441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders\~ Unused">
+      <UniqueIdentifier>{a266e94d-1fcc-49db-80a1-273cf974ec04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\%2a UI Elements">
+      <UniqueIdentifier>{bfe3c096-1fd9-4030-9e96-0ddcfcd97cdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\%2a Object Class">
+      <UniqueIdentifier>{04c66365-8df5-4ea5-ba66-d56387e28c0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\~ Camera">
+      <UniqueIdentifier>{e1e92a1f-182f-4f3b-8ea5-89cb34490c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\~ Camera">
+      <UniqueIdentifier>{839b52ed-149c-42c3-bef7-bc2cfa6e2aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\%2a Components">
+      <UniqueIdentifier>{aea07f24-12d6-4072-b8cc-33a2bb66e6b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\%2a Components">
+      <UniqueIdentifier>{b6307372-0237-40fe-990e-b3748af8c100}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Debug.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MMath.cpp">
-      <Filter>Source Files\Math</Filter>
+      <Filter>Source Files\- Math</Filter>
     </ClCompile>
     <ClCompile Include="VMath.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DemoObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Trackball.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Noise.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\- Math</Filter>
     </ClCompile>
     <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files\Scenes</Filter>
+      <Filter>Source Files\! Scenes</Filter>
     </ClCompile>
     <ClCompile Include="TestLevel.cpp">
-      <Filter>Source Files\Scenes</Filter>
+      <Filter>Source Files\! Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="UIButton.cpp">
+      <Filter>Source Files\%2a UI Elements</Filter>
     </ClCompile>
     <ClCompile Include="UIObject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\%2a UI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="UIPanel.cpp">
+      <Filter>Source Files\%2a UI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\%2a Object Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="DemoObject.cpp">
+      <Filter>Source Files\%2a Object Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\%2a Object Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsObject.cpp">
+      <Filter>Source Files\%2a Object Classes</Filter>
     </ClCompile>
     <ClCompile Include="PinBall.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\%2a Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files\! Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source Files\~ Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\~ Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Noise.cpp">
+      <Filter>Source Files\~ Unused</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjLoader.cpp">
+      <Filter>Source Files\~ Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\~ Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\~ Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Source Files\~ Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\~ Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\! Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\! Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\~ Unused</Filter>
+    </ClCompile>
+    <ClCompile Include="Trackball.cpp">
+      <Filter>Source Files\~ Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderComponent.cpp">
+      <Filter>Source Files\%2a Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Source Files\%2a Components</Filter>
+    </ClCompile>
+    <ClCompile Include="UIImage.cpp">
+      <Filter>Source Files\%2a UI Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Paddle.cpp">
+      <Filter>Source Files\%2a Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Affector.cpp">
+      <Filter>Source Files\%2a Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Goal.cpp">
+      <Filter>Source Files\%2a Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionTestLevel.cpp">
+      <Filter>Source Files\! Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Debug.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix.h">
-      <Filter>Header Files\Math</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="MMath.h">
-      <Filter>Header Files\Math</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="Plane.h">
-      <Filter>Header Files\Math</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="Vector.h">
-      <Filter>Header Files\Math</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="VMath.h">
-      <Filter>Header Files\Math</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="Sphere.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DemoObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlanetaryObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Trackball.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkyBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Noise.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
     <ClInclude Include="MainMenu.h">
-      <Filter>Header Files\Scenes</Filter>
+      <Filter>Header Files\! Scenes</Filter>
     </ClInclude>
     <ClInclude Include="TestLevel.h">
-      <Filter>Header Files\Scenes</Filter>
+      <Filter>Header Files\! Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Header Files\Scenes</Filter>
+      <Filter>Header Files\! Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="UIPanel.h">
+      <Filter>Header Files\%2a UI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="UIButton.h">
+      <Filter>Header Files\%2a UI Elements</Filter>
     </ClInclude>
     <ClInclude Include="UIObject.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\%2a UI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\%2a Object Class</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsObject.h">
+      <Filter>Header Files\%2a Object Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\%2a Object Class</Filter>
+    </ClInclude>
+    <ClInclude Include="DemoObject.h">
+      <Filter>Header Files\%2a Object Class</Filter>
     </ClInclude>
     <ClInclude Include="PinBall.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\%2a Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Header Files\! Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\~ Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Header Files\~ Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Noise.h">
+      <Filter>Header Files\~ Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjLoader.h">
+      <Filter>Header Files\~ Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="PlanetaryObject.h">
+      <Filter>Header Files\~ Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\~ Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Header Files\~ Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\~ Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\! Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\~ Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files\~ Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Trackball.h">
+      <Filter>Header Files\~ Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderComponent.h">
+      <Filter>Header Files\%2a Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Header Files\%2a Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UIImage.h">
+      <Filter>Header Files\%2a UI Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Paddle.h">
+      <Filter>Header Files\%2a Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Affector.h">
+      <Filter>Header Files\%2a Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Goal.h">
+      <Filter>Header Files\%2a Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionTestLevel.h">
+      <Filter>Header Files\! Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -186,56 +300,56 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\phongFrag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\phongVert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\multiPhongFrag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\multiPhongVert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="shaders\multiPhongArrayFrag.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
     <None Include="shaders\multiPhongArrayVert.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
-    <None Include="shaders\texturePhongFrag.glsl">
-      <Filter>Resource Files</Filter>
+    <None Include="shaders\multiPhongFrag.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
-    <None Include="shaders\texturePhongVert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\skyboxFrag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\skyboxVert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\reflectionFrag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\reflectionVert.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\timeFrag.glsl">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="shaders\timeVert.glsl">
-      <Filter>Resource Files</Filter>
+    <None Include="shaders\multiPhongVert.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
     <None Include="shaders\noiseFrag.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
     <None Include="shaders\noiseVert.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\texturePhongFrag.glsl">
+      <Filter>Resource Files\Shaders\! Used</Filter>
+    </None>
+    <None Include="shaders\texturePhongVert.glsl">
+      <Filter>Resource Files\Shaders\! Used</Filter>
+    </None>
+    <None Include="shaders\phongFrag.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\phongVert.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\reflectionFrag.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\reflectionVert.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\skyboxFrag.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\skyboxVert.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\timeFrag.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
+    </None>
+    <None Include="shaders\timeVert.glsl">
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
     <None Include="shaders\turbulenceFrag.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders\~ Unused</Filter>
     </None>
   </ItemGroup>
 </Project>

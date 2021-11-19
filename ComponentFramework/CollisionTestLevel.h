@@ -1,24 +1,21 @@
-#ifndef MAINMENU_H
-#define MAINMENU_H
+#ifndef COLLSIONTESTLEVEL_H
+#define COLLSIONTESTLEVEL_H
 #include "Scene.h"
-
-class UIPanel;
-class UIButton;
-class UIImage;
+#include "PinBall.h"
 
 /// <Notes>
 /// 
 /// </summary>
-class MainMenu : public Scene {
+class CollisionTestLevel : public Scene {
 private:
+	const static int maxBalls = 10;
+	int currentSpawnIndex = 0;
+	PinBall* balls[maxBalls];
+	GameObject* floor;
 
-	UIPanel* panel_Menu_Main;
-	UIPanel* panel_Menu_Credits;
-
-	
 public:
-	explicit MainMenu();
-	virtual ~MainMenu();
+	explicit CollisionTestLevel();
+	virtual ~CollisionTestLevel();
 
 	virtual bool OnCreate() override;
 	virtual void OnDestroy() override;
@@ -28,4 +25,4 @@ public:
 };
 
 
-#endif // SCENE0_H
+#endif 

@@ -5,5 +5,5 @@
 [INFO]: Graphics card name Intel(R) Iris(R) Plus Graphics
 [INFO]: GLSL Version 4.60 - Build 27.20.100.9621
 [INFO]: Creating Timer
-[INFO]: Created MainMenu: 
-[INFO]: Created MainMenu: 
+[INFO]: Created Main Menu: 
+[INFO]: Created Test Level: 

@@ -1,7 +1,7 @@
 #ifndef SCENEMANAGER_H
 #define SCENEMANAGER_H
-
 #include <string>
+
 class SceneManager  {
 public:
 	
@@ -15,7 +15,8 @@ public:
 private:
 	enum SCENE_NUMBER {
 		SCENE0 = 0,
-		SCENE1 = 1
+		SCENE1 = 1,
+		SCENE2 = 2
 		// Add more when we make more
 	};
 
