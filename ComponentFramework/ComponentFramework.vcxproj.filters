@@ -52,9 +52,6 @@
     <Filter Include="Source Files\! Scenes">
       <UniqueIdentifier>{e8c82a08-d757-47ee-b6fe-eee59a99570f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\%2a UI Elements">
-      <UniqueIdentifier>{3e26027e-d069-497d-9e72-bb6ed10fd373}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\~ Helpers">
       <UniqueIdentifier>{d8a5a632-8d17-4360-bc22-644917226af3}</UniqueIdentifier>
     </Filter>
@@ -64,9 +61,6 @@
     <Filter Include="Resource Files\Shaders\~ Unused">
       <UniqueIdentifier>{a266e94d-1fcc-49db-80a1-273cf974ec04}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\%2a UI Elements">
-      <UniqueIdentifier>{bfe3c096-1fd9-4030-9e96-0ddcfcd97cdf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\%2a Object Class">
       <UniqueIdentifier>{04c66365-8df5-4ea5-ba66-d56387e28c0f}</UniqueIdentifier>
     </Filter>
@@ -75,12 +69,6 @@
     </Filter>
     <Filter Include="Source Files\~ Camera">
       <UniqueIdentifier>{839b52ed-149c-42c3-bef7-bc2cfa6e2aa2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\%2a Components">
-      <UniqueIdentifier>{aea07f24-12d6-4072-b8cc-33a2bb66e6b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\%2a Components">
-      <UniqueIdentifier>{b6307372-0237-40fe-990e-b3748af8c100}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +83,6 @@
     </ClCompile>
     <ClCompile Include="TestLevel.cpp">
       <Filter>Source Files\! Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="UIButton.cpp">
-      <Filter>Source Files\%2a UI Elements</Filter>
-    </ClCompile>
-    <ClCompile Include="UIPanel.cpp">
-      <Filter>Source Files\%2a UI Elements</Filter>
     </ClCompile>
     <ClCompile Include="DemoObject.cpp">
       <Filter>Source Files\%2a Object Classes</Filter>
@@ -150,15 +132,6 @@
     <ClCompile Include="Trackball.cpp">
       <Filter>Source Files\~ Camera</Filter>
     </ClCompile>
-    <ClCompile Include="RenderComponent.cpp">
-      <Filter>Source Files\%2a Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformComponent.cpp">
-      <Filter>Source Files\%2a Components</Filter>
-    </ClCompile>
-    <ClCompile Include="UIImage.cpp">
-      <Filter>Source Files\%2a UI Elements</Filter>
-    </ClCompile>
     <ClCompile Include="Paddle.cpp">
       <Filter>Source Files\%2a Entities</Filter>
     </ClCompile>
@@ -202,12 +175,6 @@
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\! Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="UIPanel.h">
-      <Filter>Header Files\%2a UI Elements</Filter>
-    </ClInclude>
-    <ClInclude Include="UIButton.h">
-      <Filter>Header Files\%2a UI Elements</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\%2a Object Class</Filter>
@@ -259,15 +226,6 @@
     </ClInclude>
     <ClInclude Include="Trackball.h">
       <Filter>Header Files\~ Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderComponent.h">
-      <Filter>Header Files\%2a Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>Header Files\%2a Components</Filter>
-    </ClInclude>
-    <ClInclude Include="UIImage.h">
-      <Filter>Header Files\%2a UI Elements</Filter>
     </ClInclude>
     <ClInclude Include="Paddle.h">
       <Filter>Header Files\%2a Entities</Filter>
