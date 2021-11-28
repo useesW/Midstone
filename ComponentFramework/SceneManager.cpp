@@ -4,11 +4,10 @@
 #include "Window.h"
 #include "MainMenu.h"
 #include "TestLevel.h"
-#include "CollisionTestLevel.h"
 
 
 
-SceneManager::SceneManager(): 
+SceneManager::SceneManager() :
 	currentScene(nullptr), window(nullptr), timer(nullptr),
 	fps(60), isRunning(false), fullScreen(false) {
 	Debug::Info("SceneManager Constructor", __FILE__, __LINE__);
@@ -20,7 +19,7 @@ SceneManager::~SceneManager() {
 		delete currentScene;
 		currentScene = nullptr;
 	}
-	
+
 	if (timer) {
 		delete timer;
 		timer = nullptr;
@@ -39,7 +38,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	window = new Window();
 	width = width_;
 	height = height_;
-	
+
 	if (!window->OnCreate(name_, width_, height_)) {
 		Debug::FatalError("Failed to initialize Window object", __FILE__, __LINE__);
 		return false;
@@ -54,7 +53,7 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	}
 	/********************************   Default first scene   ***********************/
 	BuildScene(SCENE0); // Change to Main Menu scene
-	
+
 	return true;
 }
 
@@ -66,7 +65,7 @@ void SceneManager::Run() {
 		timer->UpdateFrameTicks();
 
 		// check current scene call designation to change scenes or quit game
-		switch (currentScene->callDesignation)	{
+		switch (currentScene->callDesignation) {
 		case -1:
 			isRunning = false;
 			break;
@@ -93,21 +92,20 @@ void SceneManager::GetEvents() {
 			isRunning = false;
 			return;
 		}
-		
+
 		else if (sdlEvent.type == SDL_KEYDOWN) {
 			switch (sdlEvent.key.keysym.scancode) {
-			// Quit should open a menue not outright exit (Remove)
-			/*case SDL_SCANCODE_ESCAPE:
-			case SDL_SCANCODE_Q:
-				isRunning = false;
-				return;*/
+				// Quit should open a menue not outright exit (Remove)
+				/*case SDL_SCANCODE_ESCAPE:
+				case SDL_SCANCODE_Q:
+					isRunning = false;
+					return;*/
 
-			// Change fullscreen key
+					// Change fullscreen key
 			case SDL_SCANCODE_RETURN:
 				fullScreen = !fullScreen;
-				if (fullScreen) {SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_FULLSCREEN);}
-				else {SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_MINIMIZED);}
-				
+				if (fullScreen) { SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_FULLSCREEN); } else { SDL_SetWindowFullscreen(window->getWindow(), SDL_WINDOW_MINIMIZED); }
+
 
 			default:
 				currentScene->HandleEvents(sdlEvent);
@@ -119,14 +117,14 @@ void SceneManager::GetEvents() {
 			isRunning = false;
 			return;
 		}
-		
+
 		currentScene->HandleEvents(sdlEvent);
 	}
 }
 
 // Called by UI elements to change or reload scene
 void SceneManager::BuildScene(SCENE_NUMBER scene) {
-	bool status; 
+	bool status;
 
 	if (currentScene != nullptr) {
 		delete currentScene;
@@ -143,18 +141,14 @@ void SceneManager::BuildScene(SCENE_NUMBER scene) {
 		currentScene = new TestLevel();
 		status = currentScene->OnCreate();
 		break;
-	case SCENE2:
-		currentScene = new CollisionTestLevel();
-		status = currentScene->OnCreate();
-		break;
 
-	// Add More Scenes Here
+		// Add More Scenes Here
 
 	default:
 		Debug::Error("Incorrect scene number assigned in the manager", __FILE__, __LINE__);
 		currentScene = nullptr;
 		break;
-	}	
+	}
 
 	if (currentScene != nullptr) {
 		currentScene->screenWidth = width;

@@ -256,36 +256,7 @@ Matrix4 MMath::inverse(const Matrix4 &m) {
 		return inverseM;
 }
 
-Vec3 MATH::MMath::viewToWorldCoord(Vec2 mousePoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix)
-{
-	
-	Vec3 rayDirec = Vec3();
-	Vec3 rayPoint = Vec3();
-
-
-	double mx = 2 * (mousePoint.x / width - .5) / projectionMatrix[0];
-	double my = 2 * (mousePoint.y / height - .5) / projectionMatrix[5];
-	double camX = -(viewMatrix[12] * viewMatrix[0] + viewMatrix[13] * viewMatrix[1] + viewMatrix[14] * viewMatrix[2]);
-	double camY = -(viewMatrix[12] * viewMatrix[4] + viewMatrix[13] * viewMatrix[5] + viewMatrix[14] * viewMatrix[6]);
-	double camZ = -(viewMatrix[12] * viewMatrix[8] + viewMatrix[13] * viewMatrix[9] + viewMatrix[14] * viewMatrix[10]);
-
-	if (projectionMatrix[15] == 0) {    //This is a perspective projection
-		rayDirec = Vec3(viewMatrix[2] + mx * viewMatrix[0] + my * viewMatrix[1],
-						viewMatrix[6] + mx * viewMatrix[4] + my * viewMatrix[5],
-						viewMatrix[10] + mx * viewMatrix[8] + my * viewMatrix[9]);
-		rayPoint = Vec3(camX, camY, camZ);
-	
-	} else {    //This is an ortho projection
-		rayDirec = Vec3(viewMatrix[2], viewMatrix[6], viewMatrix[10]);
-		rayPoint = Vec3(camX + mx * viewMatrix[0] + my * viewMatrix[1],
-						camY + mx * viewMatrix[4] + my * viewMatrix[5],
-						camZ + mx * viewMatrix[8] + my * viewMatrix[9]);
-	}
-
-
-	//std::cout << "rayPoint: " << "(" << rayPoint.x << "," << rayPoint.y << "," << rayPoint.z << ")" << std::endl;
-	//std::cout << "rayDirec: " << "(" << rayDirec.x << "," << rayDirec.y << "," << rayDirec.z << ")" << std::endl;
-
+Vec3 MATH::MMath::viewToWorldCoord(Vec2 mousePoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix) {
 	float x = 2.0 * mousePoint.x / width - 1;
 	float y = -2.0 * mousePoint.y / height + 1;
 	Matrix4 viewProjectionInverse = inverse(projectionMatrix * viewMatrix);
@@ -294,9 +265,7 @@ Vec3 MATH::MMath::viewToWorldCoord(Vec2 mousePoint, float width, float height, M
 	return viewProjectionInverse * r;
 }
 
-
-Vec2 MATH::MMath::worldToViewCoord(Vec3 boundsPoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix)
-{
+Vec2 MATH::MMath::worldToViewCoord(Vec3 boundsPoint, float width, float height, Matrix4 projectionMatrix, Matrix4 viewMatrix) {
 	Matrix4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 
 	//transform world to clipping coordinates
@@ -306,7 +275,7 @@ Vec2 MATH::MMath::worldToViewCoord(Vec3 boundsPoint, float width, float height, 
 	//we calculate -point3D.getY() because the screen Y axis is
 	//oriented top->down 
 	float y = ((1 - boundsPoint.y) / 2.0) * height;
-	
+
 	Vec2 r = Vec2();
 	r.x = x;
 	r.y = y;

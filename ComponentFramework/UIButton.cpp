@@ -9,7 +9,6 @@ UIButton::UIButton(std::string name_, UIObject* parent_, Scene* currentScene_, b
 	currentScene = currentScene_;
 	render = startRendered_;
 	enabled = true;
-
 	clickBounds = clickBounds_;
 
 	transform = transform_;
