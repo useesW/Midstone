@@ -1,30 +1,44 @@
 #ifndef PINBALL_H
 #define PINBALL_H
 #include <glew.h>
+#include "Matrix.h"
+#include "Mesh.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "GameObject.h"
+#include "PhysicsObject.h"
+//#include "Paddle.h"
 
 using namespace MATH;
 
-class PinBall : public GameObject {
-public:
+// Once the module objects are created using this model, delete it
+class PinBall : public PhysicsObject, public GameObject {
+
+private:
+	Matrix4 modelMatrix;
+	Mesh* mesh;
+	Shader* shader;
+	Texture* texture;
+	Vec2 gameBounds;
+	float textureScale;
 	float collisionRadius;
 
-	PinBall(std::string name_, GameObject* parent_, float collisionRadius_,
-				TransformComponent* transform_, RenderComponent* renderer_,
-				float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
-	PinBall(std::string name_, float collisionRadius_,
-				TransformComponent* transform_, RenderComponent* renderer_,
-				float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
-	PinBall() {};
+public:
+	PinBall(Mesh* mesh_, Shader* shader_, Texture* texture_, float textureScale_, float collisionRadius_, Vec2 gameBounds_);
 	~PinBall();
+	virtual bool OnCreate();
+	virtual void OnDestroy();
+	virtual void Update(const float deltaTime_);
+	virtual void Render() const;
+	virtual void HandleEvents(const SDL_Event& event);
 
-	bool OnCreate() override;
-	void OnDestroy() override;
-	//void Update(const float deltaTime_) override;
-	void HandleEvents(const SDL_Event& sdlEvent) override;
 
-	void CalculateCollisions(GameObject* others[]);
-	void HandleEffects(std::string otherName);
+	inline Shader* getShader() const { return shader; }
+	inline void setModelMatrix(const Matrix4& modelMatrix_) { modelMatrix = modelMatrix_; }
+	inline const Matrix4& getModelMatrix() { return modelMatrix; }
+	void CalculateCollisions(PinBall* balls[]);
+	void HandleDisplacement(Vec2 displacementVector);
+	void HandleFlipVelocy(Vec2 signVector);
 };
 
 #endif

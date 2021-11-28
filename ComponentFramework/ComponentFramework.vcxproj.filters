@@ -99,19 +99,10 @@
     <ClCompile Include="UIButton.cpp">
       <Filter>Source Files\%2a UI Elements</Filter>
     </ClCompile>
-    <ClCompile Include="UIObject.cpp">
-      <Filter>Source Files\%2a UI Elements</Filter>
-    </ClCompile>
     <ClCompile Include="UIPanel.cpp">
       <Filter>Source Files\%2a UI Elements</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\%2a Object Classes</Filter>
-    </ClCompile>
     <ClCompile Include="DemoObject.cpp">
-      <Filter>Source Files\%2a Object Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
       <Filter>Source Files\%2a Object Classes</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsObject.cpp">
@@ -177,8 +168,11 @@
     <ClCompile Include="Goal.cpp">
       <Filter>Source Files\%2a Entities</Filter>
     </ClCompile>
-    <ClCompile Include="CollisionTestLevel.cpp">
-      <Filter>Source Files\! Scenes</Filter>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\- Math</Filter>
+    </ClCompile>
+    <ClCompile Include="UIObject.cpp">
+      <Filter>Source Files\%2a Object Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -215,16 +209,10 @@
     <ClInclude Include="UIButton.h">
       <Filter>Header Files\%2a UI Elements</Filter>
     </ClInclude>
-    <ClInclude Include="UIObject.h">
-      <Filter>Header Files\%2a UI Elements</Filter>
-    </ClInclude>
     <ClInclude Include="GameObject.h">
       <Filter>Header Files\%2a Object Class</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsObject.h">
-      <Filter>Header Files\%2a Object Class</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
       <Filter>Header Files\%2a Object Class</Filter>
     </ClInclude>
     <ClInclude Include="DemoObject.h">
@@ -290,8 +278,11 @@
     <ClInclude Include="Goal.h">
       <Filter>Header Files\%2a Entities</Filter>
     </ClInclude>
-    <ClInclude Include="CollisionTestLevel.h">
-      <Filter>Header Files\! Scenes</Filter>
+    <ClInclude Include="UIObject.h">
+      <Filter>Header Files\%2a Object Class</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files\- Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,10 @@
 #ifndef AFFECTOR_H
 #define AFFECTOR_H
 #include <glew.h>
+#include "Matrix.h"
+#include "Mesh.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "GameObject.h"
 
 /*To-Do (Pseudo-Code)
@@ -13,13 +17,7 @@ using namespace MATH;
 class Affector : public GameObject {
 public:
 
-	Affector(std::string name_, GameObject* parent_, float collisionRadius_,
-				TransformComponent* transform_, RenderComponent* renderer_,
-				float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
-
-	Affector(std::string name_, float collisionRadius_,
-				TransformComponent* transform_, RenderComponent* renderer_,
-				float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
+	Affector();
 	~Affector();
 
 	bool OnCreate() override;

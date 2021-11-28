@@ -28,7 +28,7 @@ namespace  MATH {
 	struct Vec2 {
 		float  x, y;
 
-		/*inline void set(float x_, float y_) {
+		inline void set(float x_, float y_) {
 			x = x_; y = y_;
 		}
 
@@ -40,7 +40,7 @@ namespace  MATH {
 			set(x, y);
 		}
 
-		inline Vec2(const Vec2& v) {
+		/*inline Vec2(const Vec2& v) {
 			set(v.x, v.y);
 		}
 

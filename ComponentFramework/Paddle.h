@@ -1,6 +1,10 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 #include <glew.h>
+#include "Matrix.h"
+#include "Mesh.h"
+#include "Shader.h"
+#include "Texture.h"
 #include "GameObject.h"
 
 /*To-Do (Pseudo-Code)
@@ -11,12 +15,7 @@ using namespace MATH;
 class Paddle : public GameObject {
 public:
 
-	Paddle(std::string name_, GameObject* parent_, float collisionRadius_,
-			TransformComponent* transform_, RenderComponent* renderer_,
-			float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
-	Paddle(std::string name_, float collisionRadius_,
-			TransformComponent* transform_, RenderComponent* renderer_,
-			float mass_, Vec3 gravity_, bool useGravity_, bool isStatic_, Mesh* collisionMesh_);
+	Paddle();
 	~Paddle();
 
 	bool OnCreate() override;
