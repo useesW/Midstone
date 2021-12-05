@@ -17,6 +17,7 @@ TestLevel::TestLevel() : camera(nullptr) {
 	camera = new Camera;
 	lightSource_UI = Vec3(0.0f, 0.0f, 0.0f);
 	Debug::Info("Created MainMenu: ", __FILE__, __LINE__);
+	// CJ is here
 }
 
 TestLevel::~TestLevel() {}
