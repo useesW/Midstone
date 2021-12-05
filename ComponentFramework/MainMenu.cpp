@@ -21,6 +21,8 @@ background_texturePtr(nullptr), credit_texturePtr(nullptr) {
 	Debug::Info("Created MainMenu: ", __FILE__, __LINE__);
 }
 
+//Tommy hoang
+
 MainMenu::~MainMenu() {}
 
 bool MainMenu::OnCreate() {
