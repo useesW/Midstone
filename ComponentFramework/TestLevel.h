@@ -11,7 +11,8 @@ class Camera;
 class UIObject;
 class PinBall;
 //class Paddle
-//class ...
+class Affector;
+class Goal;
 
 class Mesh;
 class Shader;
@@ -34,10 +35,11 @@ private:
 	Vec3 lightSource_UI;
 
 	const static int maxHealth = 5;
+	const static int winScore = 100;
 	int health = maxHealth;
 	int score = 0;
 	float timeremaining = 300.00;
-
+	Vec3 spawnLocation = Vec3(-1.5f,2.0f,0.0f);
 
 #pragma region UI
 	UIObject* menuUI_Pause;
@@ -92,13 +94,22 @@ private:
 
 
 #pragma region Entities
-	PinBall* balls[maxHealth];
+	PinBall* ball;
 	Texture* ball_texturePtr;
 
-	// The remaining entities are persistant
 	// Paddles* paddles[x];
-	// Affector* affectors[y];
+	
+	Affector* affector;
+	//Affector* affectors[y];
+	Texture* affector_Default_texturePtr;
+	Texture* affector_Hit_texturePtr;
+
 	// Goal* goals[z];
+	Goal* goal_Win;
+	Goal* goal_Lose;
+	Texture* goal_WinState_texturePtr;
+	Texture* goal_Deactivated_texturePtr;
+	Texture* goal_LoseState_texturePtr__TEMP;
 
 #pragma endregion
 

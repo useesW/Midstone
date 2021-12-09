@@ -1,25 +1,26 @@
+#include "TestLevel.h"
 #include <glew.h>
 #include <SDL.h>
 #include <iostream>
 #include "Debug.h"
 #include "MMath.h"
-#include "Physics.h"
+
 #include "ObjLoader.h"
-#include "TestLevel.h"
-#include "Camera.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Texture.h"
+
+#include "Camera.h"
 #include "UIObject.h"
+#include "Physics.h"
 #include "Pinball.h"
+#include "Affector.h"
+#include "Goal.h"
 
 TestLevel::TestLevel() : camera(nullptr) {
 	camera = new Camera;
 	lightSource_UI = Vec3(0.0f, 0.0f, 0.0f);
 	Debug::Info("Created MainMenu: ", __FILE__, __LINE__);
-	// CJ is 
-	
-	
 }
 
 TestLevel::~TestLevel() {}
@@ -173,22 +174,19 @@ bool TestLevel::OnCreate() {
 
 #pragma region Entities
 
-#pragma region Balls
+#pragma region Ball
 	// Load PinBall Texture
 	ball_texturePtr = new Texture();
 	if (ball_texturePtr->LoadImage("textures/Ball.png") == false) { Debug::FatalError("Couldn't Load PinBall Texture", __FILE__, __LINE__); return false; }
 
 	// PinBall Initialization
-	Vec3 randpos[] = { Vec3(0,0,0), Vec3(1,1,0), Vec3(-2,1,0) ,Vec3(3,2,0) ,Vec3(-1,-3,0) };
-	Vec3 randvel[] = { Vec3(15,1,0), Vec3(2,1,0), Vec3(7,3,0) ,Vec3(3,4,0) ,Vec3(1,3,0) };
+	Vec3 randpos = Vec3(-2,1,0);
+	Vec3 randvel = Vec3(15,1,0);
+	
+	ball = new PinBall(UI_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.1f, Vec2(2.0f, 2.0f));
+	if (ball == nullptr) { Debug::FatalError("PinBall Could Not Be Initialized", __FILE__, __LINE__); return false; }
 
-	for (int i = 0; i < maxHealth; i++) {
-		balls[i] = new PinBall(UI_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.1f, Vec2(2.0f, 2.0f));
-		if (balls[i] == nullptr) { Debug::FatalError("PinBall [ " + std::to_string(i) + " ] Could Not Be Initialized", __FILE__, __LINE__); return false; }
-
-		balls[i]->setPos(randpos[i]);
-		balls[i]->setVel(randvel[i]);
-	}
+	ball->setPos(spawnLocation);
 #pragma endregion
 
 #pragma region Paddles
@@ -196,11 +194,28 @@ bool TestLevel::OnCreate() {
 #pragma endregion
 
 #pragma region Affectors
+	// Load PinBall Texture
+	affector_Default_texturePtr = new Texture();
+	affector_Hit_texturePtr = new Texture();
+	if (affector_Default_texturePtr->LoadImage("textures/Affector_Default.png") == false) { Debug::FatalError("Couldn't Load Default Affector Texture", __FILE__, __LINE__); return false; }
+	if (affector_Hit_texturePtr->LoadImage("textures/Affector_Hit.png") == false) { Debug::FatalError("Couldn't Load Hit Affector Texture", __FILE__, __LINE__); return false; }
 
+	affector = new Affector(UI_meshPtr, UI_shaderPtr, affector_Default_texturePtr, affector_Hit_texturePtr, Vec3(0.0f,-1.5f,0.0f), 0.3f, 0.3f, 10);
+	if (affector == nullptr) { Debug::FatalError("Affector Could Not Be Initialized", __FILE__, __LINE__); return false; }
 #pragma endregion
 
 #pragma region Goals
+	goal_WinState_texturePtr = new Texture();
+	goal_Deactivated_texturePtr = new Texture();
+	goal_LoseState_texturePtr__TEMP = new Texture();
+	if (goal_WinState_texturePtr->LoadImage("textures/Goal_Win.png") == false) { Debug::FatalError("Couldn't Load Win Goal Texture", __FILE__, __LINE__); return false; }
+	if (goal_Deactivated_texturePtr->LoadImage("textures/EntitiyEmpty.png") == false) { Debug::FatalError("Couldn't Load Deactivated Goal Texture", __FILE__, __LINE__); return false; }
+	if (goal_LoseState_texturePtr__TEMP->LoadImage("textures/Goal_Fail.png") == false) { Debug::FatalError("Couldn't Load Lose Goal Texture", __FILE__, __LINE__); return false; }
 
+	goal_Win = new Goal(UI_meshPtr, UI_shaderPtr, goal_WinState_texturePtr, goal_Deactivated_texturePtr, Vec3(), 0.3f, 0.3f, false);
+	goal_Lose = new Goal(UI_meshPtr, UI_shaderPtr, goal_LoseState_texturePtr__TEMP, goal_Deactivated_texturePtr, Vec3(-1.5f,-1.0f,0.0f), 0.3f, 0.3f, true);
+	if (goal_Win == nullptr) { Debug::FatalError("Win State Goal Could Not Be Initialized", __FILE__, __LINE__); return false; }
+	if (goal_Lose == nullptr) { Debug::FatalError("Lose State Could Not Be Initialized", __FILE__, __LINE__); return false; }
 #pragma endregion
 
 #pragma endregion
@@ -214,12 +229,26 @@ bool TestLevel::OnCreate() {
 
 void TestLevel::Update(const float deltaTime) {
 	if (menuState == 0) { // If A Menu Is Open, The Game Is Paused (No Entity Updates)
-		for (int i = 0; i < health; i++) {
-			balls[i]->CalculateCollisions(balls);
-			balls[i]->Update(deltaTime);
+#pragma region Collision Calculations
+		ball->CalculateCollisions();
+		score += affector->CalculateCollision(ball);
+		if (goal_Lose->CalculateCollision(ball)) {
+			ball->setPos(spawnLocation);
+			ball->setVel(Vec3());
+			health--;
+			if (health <= 0) {
+				menuState = 3;
+			}
 		}
-
+		if (score >= winScore && goal_Win->CalculateCollision(ball)) {
+			menuState = 2;
+		}
+#pragma endregion
+		if (score >= winScore && !goal_Win->activated) { goal_Win->setActivated(true); }
+		ball->Update(deltaTime);
+		affector->Update(deltaTime);
 		UpdateTime(deltaTime);
+		std::cout << score << std::endl;
 	}
 }
 
@@ -269,6 +298,7 @@ void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 #pragma region Begin Play
 	if (menuState == 4 && (sdlEvent.key.keysym.scancode == SDL_SCANCODE_SPACE)) {
 		menuState = 0;
+		ball->setPos(spawnLocation);
 		// Activate Starting Ball
 	}
 #pragma endregion
@@ -405,14 +435,17 @@ void TestLevel::Render() const {
 }
 
 void TestLevel::RenderEntities() const {
-	GLuint Program_Entity = balls[0]->getShader()->getProgram();
+	GLuint Program_Entity = ball->getShader()->getProgram();
 	glUseProgram(Program_Entity);
 
-	glUniformMatrix4fv(balls[0]->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
-	glUniformMatrix4fv(balls[0]->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
-	glUniform3fv(balls[0]->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
+	glUniformMatrix4fv(ball->getShader()->getUniformID("projectionMatrix"), 1, GL_FALSE, camera->getProjectionMatrix());
+	glUniformMatrix4fv(ball->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
+	glUniform3fv(ball->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
 
-	for (int i = 0; i < maxHealth; i++) { balls[i]->Render(); }
+	ball->Render();
+	affector->Render();
+	goal_Win->Render();
+	goal_Lose->Render();
 }
 
 void TestLevel::OnDestroy() {
