@@ -12,6 +12,8 @@
 * Generally This Class Would Hold The: Name & Durration of the effect which the ball would use (Name = "SpeedMultiply" --> Ball INcreases Speed for duration)
 * Right Now, we only have the speed effect, so you can just make this class spefically for that instead of making it dynamic for all other effects
 */
+
+// completed paddles 
 using namespace MATH;
 
 class Affector : public GameObject {
