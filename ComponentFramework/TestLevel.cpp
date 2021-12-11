@@ -217,16 +217,11 @@ bool TestLevel::OnCreate() {
 	// Load PinBall Texture
 	ball_texturePtr = new Texture();
 	if (ball_texturePtr->LoadImage("textures/Ball.png") == false) { Debug::FatalError("Couldn't Load PinBall Texture", __FILE__, __LINE__); return false; }
-
-	// PinBall Initialization
-	Vec3 randpos = Vec3(-2,1,0);
-	Vec3 randvel = Vec3(15,1,0);
 	
 	ball = new PinBall(UI_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.1f, Vec2(2.5f, 2.5f));
 	if (ball == nullptr) { Debug::FatalError("PinBall Could Not Be Initialized", __FILE__, __LINE__); return false; }
 
 	ball->setPos(spawnLocation);
-	//ball->setVel(randvel);
 #pragma endregion
 
 #pragma region Paddles
@@ -248,8 +243,7 @@ bool TestLevel::OnCreate() {
 	if (affector_Default_texturePtr->LoadImage("textures/Affector_Default.png") == false) { Debug::FatalError("Couldn't Load Default Affector Texture", __FILE__, __LINE__); return false; }
 	if (affector_Hit_texturePtr->LoadImage("textures/Affector_Hit.png") == false) { Debug::FatalError("Couldn't Load Hit Affector Texture", __FILE__, __LINE__); return false; }
 
-
-	Vec3 affectorPos[5] = { 
+  Vec3 affectorPos[5] = { 
 		Vec3(1.0f, 0.0f, 0.0f),
 		Vec3(1.0f, 1.0f, 0.0f),
 		Vec3(0.0f, 1.5f, 0.0f),

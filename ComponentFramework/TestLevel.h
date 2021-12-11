@@ -97,7 +97,7 @@ private:
 
 
 #pragma region Entities
-	UIObject* level_Base;
+UIObject* level_Base;
 	UIObject* level_Roof;
 	Texture* level_Base_texturePtr;
 	Texture* level_Roof_texturePtr;
@@ -120,7 +120,6 @@ private:
 	Texture* goal_WinState_texturePtr;
 	Texture* goal_Deactivated_texturePtr;
 	Texture* goal_LoseState_texturePtr__TEMP;
-
 #pragma endregion
 
 
