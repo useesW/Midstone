@@ -36,9 +36,9 @@ public:
 	inline Shader* getShader() const { return shader; }
 	inline void setModelMatrix(const Matrix4& modelMatrix_) { modelMatrix = modelMatrix_; }
 	inline const Matrix4& getModelMatrix() { return modelMatrix; }
-	void CalculateCollisions(PinBall* balls[]);
-	void HandleDisplacement(Vec2 displacementVector);
-	void HandleFlipVelocy(Vec2 signVector);
+	void CalculateCollisions();
+
+	inline float getCollisionRadius() { return collisionRadius; }
 };
 
 #endif

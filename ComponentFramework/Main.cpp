@@ -2,6 +2,7 @@
 #include <stdlib.h>  
 #include <crtdbg.h>
 #include <string>
+//#include <Windows.h>
 #include "SceneManager.h"
 #include "Debug.h"
 
@@ -12,6 +13,9 @@ int main(int argc, char* args[]) {
 	Debug::DebugInit(name + "_Log");
 	Debug::Info("Starting the GameSceneManager", __FILE__, __LINE__);
 	
+	//PlaySound(TEXT("audio/pinball_remix_sc.wav"), NULL, SND_LOOP);
+	//PlaySound("applause_yeah.wav"), NULL, SND_SYNC);
+
 	SceneManager* gsm = new SceneManager();
 	if (gsm->Initialize(name, 1280, 720) ==  true) {
 		gsm->Run();
