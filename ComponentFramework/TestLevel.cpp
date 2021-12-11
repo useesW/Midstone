@@ -14,6 +14,7 @@
 #include "UIObject.h"
 #include "Physics.h"
 #include "Pinball.h"
+#include "Paddle.h"
 #include "Affector.h"
 #include "Goal.h"
 
@@ -96,7 +97,7 @@ bool TestLevel::OnCreate() {
 #pragma endregion
 
 #pragma region Buttons
-	Pause_button_Resume_bounds = Vec4(0.123113, 0.201354, -0.123113, 0.113909);
+	Pause_button_Resume_bounds = Vec4(0.121963, 0.117361, -0.125415, 0.202504);
 	Pause_button_Replay_bounds = Vec4(0.112758, 0.0770898, -0.120812, -0.00805415);
 	Pause_button_QuitToMenu_bounds = Vec4(0.231269, -0.0437226, -0.23357, -0.134619);
 	Pause_button_QuitToDesktop_bounds = Vec4(0.298004, -0.178342, -0.283046, -0.269239);
@@ -133,10 +134,10 @@ bool TestLevel::OnCreate() {
 #pragma endregion
 
 #pragma region Time Display
-	// Load Health UI Texture
-	for (int i = 0; i <= 10; i++) {
+	// Load Timer UI Texture
+	for (int i = 0; i <= 11; i++) {
 		timeUI_texturePtr[i] = new Texture();
-		if (timeUI_texturePtr[i]->LoadImage(("textures/Number_" + std::to_string(i) + ".png").c_str()) == false) { Debug::FatalError("Couldn't Load Time UI # " + std::to_string(i) + " Texture", __FILE__, __LINE__); return false; }
+		if (timeUI_texturePtr[i]->LoadImage(("textures/Timer_" + std::to_string(i) + ".png").c_str()) == false) { Debug::FatalError("Couldn't Load Time UI # " + std::to_string(i) + " Texture", __FILE__, __LINE__); return false; }
 	}
 
 	// Time UI Initialization
@@ -170,26 +171,68 @@ bool TestLevel::OnCreate() {
 	}
 #pragma endregion
 
+#pragma region Score
+	
+	// Score UI Initialization
+	const float scoreBarOffset = 0.3f;
+	currentOffset = 0.0f;
+
+	for (int i = 0; i < 10; i++) {
+		scoreUI[i] = new UIObject(UI_meshPtr, UI_shaderPtr, timeUI_texturePtr[0]);
+
+		if (scoreUI[i] == nullptr) { Debug::FatalError("Score UI [ " + std::to_string(i) + " ] Could Not Be Initialized", __FILE__, __LINE__); return false; }
+
+		scoreUI[i]->setModelMatrix(
+			MMath::translate(Vec3(currentOffset, 3.7f, 0.f)) * // Iterates on offset to make sure health icons are spaced apart
+			MMath::scale(Vec3(0.1f, 0.2f, 1.0)) * // Identical scales for each
+			MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f))); // face the camera
+
+		currentOffset += scoreBarOffset;
+	}
+#pragma endregion
+
 #pragma endregion
 
 #pragma region Entities
+
+#pragma region Level
+	// Load Level Base Texture
+	level_Base_texturePtr = new Texture();
+	level_Roof_texturePtr = new Texture();
+	if (level_Base_texturePtr->LoadImage("textures/Level_Base.png") == false) { Debug::FatalError("Couldn't Load Level Base Texture", __FILE__, __LINE__); return false; }
+	if (level_Roof_texturePtr->LoadImage("textures/Level_Roof.png") == false) { Debug::FatalError("Couldn't Load Level Roof Texture", __FILE__, __LINE__); return false; }
+
+
+	level_Base = new UIObject(UI_meshPtr, UI_shaderPtr, level_Base_texturePtr);
+	level_Roof = new UIObject(UI_meshPtr, UI_shaderPtr, level_Roof_texturePtr);
+	if (level_Base == nullptr) { Debug::FatalError("Level Base Could Not Be Initialized", __FILE__, __LINE__); return false; }
+	if (level_Roof == nullptr) { Debug::FatalError("Level Roof Could Not Be Initialized", __FILE__, __LINE__); return false; }
+
+	float levelScale = 3.0f;
+	level_Base->setModelMatrix(MMath::scale(Vec3(levelScale, levelScale, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
+	level_Roof->setModelMatrix(MMath::scale(Vec3(levelScale, levelScale, 1.0)) * MMath::rotate(180, Vec3(0.0f, 0.0f, 1.0f)));
+#pragma endregion
 
 #pragma region Ball
 	// Load PinBall Texture
 	ball_texturePtr = new Texture();
 	if (ball_texturePtr->LoadImage("textures/Ball.png") == false) { Debug::FatalError("Couldn't Load PinBall Texture", __FILE__, __LINE__); return false; }
-
-	// PinBall Initialization
-	Vec3 randpos = Vec3(-2,1,0);
-	Vec3 randvel = Vec3(15,1,0);
 	
-	ball = new PinBall(UI_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.1f, Vec2(2.0f, 2.0f));
+	ball = new PinBall(UI_meshPtr, UI_shaderPtr, ball_texturePtr, 0.1f, 0.1f, Vec2(2.5f, 2.5f));
 	if (ball == nullptr) { Debug::FatalError("PinBall Could Not Be Initialized", __FILE__, __LINE__); return false; }
 
 	ball->setPos(spawnLocation);
 #pragma endregion
 
 #pragma region Paddles
+	// Load Paddle Texture
+	paddle_texturePtr = new Texture();
+	if (paddle_texturePtr->LoadImage("textures/Paddle.png") == false) { Debug::FatalError("Couldn't Load Paddle Texture", __FILE__, __LINE__); return false; }
+
+	paddle_Left = new Paddle(UI_meshPtr, UI_shaderPtr, paddle_texturePtr, Vec2(1.5f,0.5f), Vec3(-1.5f,-1.5f,0.0f), 45.0f, Vec2(1.1f, 0.5f));
+	paddle_Right = new Paddle(UI_meshPtr, UI_shaderPtr, paddle_texturePtr, Vec2(1.5f,0.5f), Vec3(1.5f,-1.5f,0.0f), -45.0f, Vec2(1.1f, 0.5f));
+	if (paddle_Left == nullptr) { Debug::FatalError("Left Paddle Could Not Be Initialized", __FILE__, __LINE__); return false; }
+	if (paddle_Right == nullptr) { Debug::FatalError("Right Paddle Could Not Be Initialized", __FILE__, __LINE__); return false; }
 
 #pragma endregion
 
@@ -200,8 +243,18 @@ bool TestLevel::OnCreate() {
 	if (affector_Default_texturePtr->LoadImage("textures/Affector_Default.png") == false) { Debug::FatalError("Couldn't Load Default Affector Texture", __FILE__, __LINE__); return false; }
 	if (affector_Hit_texturePtr->LoadImage("textures/Affector_Hit.png") == false) { Debug::FatalError("Couldn't Load Hit Affector Texture", __FILE__, __LINE__); return false; }
 
-	affector = new Affector(UI_meshPtr, UI_shaderPtr, affector_Default_texturePtr, affector_Hit_texturePtr, Vec3(0.0f,-1.5f,0.0f), 0.3f, 0.3f, 10);
-	if (affector == nullptr) { Debug::FatalError("Affector Could Not Be Initialized", __FILE__, __LINE__); return false; }
+  Vec3 affectorPos[5] = { 
+		Vec3(1.0f, 0.0f, 0.0f),
+		Vec3(1.0f, 1.0f, 0.0f),
+		Vec3(0.0f, 1.5f, 0.0f),
+		Vec3(-1.0f, 0.0f, 0.0f),
+		Vec3(-1.0f, 1.0f, 0.0f),
+	};
+
+	for (int i = 0; i < 5; i++) {
+		affector[i] = new Affector(UI_meshPtr, UI_shaderPtr, affector_Default_texturePtr, affector_Hit_texturePtr, affectorPos[i], 0.2f, 0.2f, 10);
+		if (affector[i] == nullptr) { Debug::FatalError("Affector Could Not Be Initialized", __FILE__, __LINE__); return false; }
+	}
 #pragma endregion
 
 #pragma region Goals
@@ -209,11 +262,11 @@ bool TestLevel::OnCreate() {
 	goal_Deactivated_texturePtr = new Texture();
 	goal_LoseState_texturePtr__TEMP = new Texture();
 	if (goal_WinState_texturePtr->LoadImage("textures/Goal_Win.png") == false) { Debug::FatalError("Couldn't Load Win Goal Texture", __FILE__, __LINE__); return false; }
-	if (goal_Deactivated_texturePtr->LoadImage("textures/EntitiyEmpty.png") == false) { Debug::FatalError("Couldn't Load Deactivated Goal Texture", __FILE__, __LINE__); return false; }
+	if (goal_Deactivated_texturePtr->LoadImage("textures/Goal_Empty.png") == false) { Debug::FatalError("Couldn't Load Deactivated Goal Texture", __FILE__, __LINE__); return false; }
 	if (goal_LoseState_texturePtr__TEMP->LoadImage("textures/Goal_Fail.png") == false) { Debug::FatalError("Couldn't Load Lose Goal Texture", __FILE__, __LINE__); return false; }
 
-	goal_Win = new Goal(UI_meshPtr, UI_shaderPtr, goal_WinState_texturePtr, goal_Deactivated_texturePtr, Vec3(), 0.3f, 0.3f, false);
-	goal_Lose = new Goal(UI_meshPtr, UI_shaderPtr, goal_LoseState_texturePtr__TEMP, goal_Deactivated_texturePtr, Vec3(-1.5f,-1.0f,0.0f), 0.3f, 0.3f, true);
+	goal_Win = new Goal(UI_meshPtr, UI_shaderPtr, goal_WinState_texturePtr, goal_Deactivated_texturePtr, Vec3(), 0.2f, 0.2f, false);
+	goal_Lose = new Goal(UI_meshPtr, UI_shaderPtr, goal_LoseState_texturePtr__TEMP, goal_Deactivated_texturePtr, Vec3(0.0f,-3.0f,0.0f), 0.5f, 0.5f, true);
 	if (goal_Win == nullptr) { Debug::FatalError("Win State Goal Could Not Be Initialized", __FILE__, __LINE__); return false; }
 	if (goal_Lose == nullptr) { Debug::FatalError("Lose State Could Not Be Initialized", __FILE__, __LINE__); return false; }
 #pragma endregion
@@ -231,30 +284,31 @@ void TestLevel::Update(const float deltaTime) {
 	if (menuState == 0) { // If A Menu Is Open, The Game Is Paused (No Entity Updates)
 #pragma region Collision Calculations
 		ball->CalculateCollisions();
-		score += affector->CalculateCollision(ball);
-		if (goal_Lose->CalculateCollision(ball)) {
-			ball->setPos(spawnLocation);
-			ball->setVel(Vec3());
-			health--;
-			if (health <= 0) {
-				menuState = 3;
-			}
-		}
-		if (score >= winScore && goal_Win->CalculateCollision(ball)) {
-			menuState = 2;
-		}
+		paddle_Left->CalculateCollision(ball);
+		paddle_Right->CalculateCollision(ball);
+		for (int i = 0; i < 5; i++) { score += affector[i]->CalculateCollision(ball); }
+		if (goal_Lose->CalculateCollision(ball)) { UpdateHealth(-1); }
+		if (goal_Win->CalculateCollision(ball) &&  score >= winScore) { menuState = 2; }
 #pragma endregion
+
+#pragma region Entity Update
 		if (score >= winScore && !goal_Win->activated) { goal_Win->setActivated(true); }
 		ball->Update(deltaTime);
-		affector->Update(deltaTime);
+		paddle_Left->Update(deltaTime);
+		paddle_Right->Update(deltaTime);
+		for (int i = 0; i < 5; i++) { affector[i]->Update(deltaTime); }
 		UpdateTime(deltaTime);
-		std::cout << score << std::endl;
+		UpdateScore();
+#pragma endregion
 	}
 }
 
 void TestLevel::UpdateHealth(int diff) {
-	health = (health + diff > maxHealth) ? maxHealth : health + diff; // cap health to max
+	ball->setPos(spawnLocation);
+	ball->setVel(Vec3());
 
+	health = (health + diff > maxHealth) ? maxHealth : health + diff; // cap health to max
+	
 	// Game State Check (Health). Open Game Over Menu
 	if (health <= 0) { menuState = 3; }
 }
@@ -283,15 +337,30 @@ void TestLevel::UpdateTime(const float deltaTime) {
 
 }
 
+void TestLevel::UpdateScore() {
+	std::string scoreChars = std::to_string(score);
+	int scorelength = scoreChars.length();
+	//std::cout << score << "--------" << scorelength << "---------" << scoreChars.at(0) << std::endl;
+
+	for (int i = 0; i < 10; i++) {
+		if (i < scorelength) {
+			const char atI = scoreChars.at(i);
+			scoreUI[i]->setTexture(timeUI_texturePtr[atoi(&atI)]);
+		} else {
+			scoreUI[i]->setTexture(timeUI_texturePtr[11]);
+		}
+	}
+}
+
 void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 #pragma region Debug
 	SDL_Event event = sdlEvent;
 	if (SDL_PollEvent(&event) == 1) {
-		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_E) { menuState = 1; }
+		/*if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_E) { menuState = 1; }
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_W) { menuState = 2; }
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_L) { menuState = 3; }
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_EQUALS) { UpdateHealth(1); }
-		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_MINUS) { UpdateHealth(-1); }
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_MINUS) { UpdateHealth(-1); }*/
 	}
 #pragma endregion
 
@@ -328,16 +397,24 @@ void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 
 		switch (menuState) {
 		case 1:
-			if (StoP.x <= Pause_button_Resume_bounds.x && StoP.y <= Pause_button_Resume_bounds.y && StoP.x >= Pause_button_Resume_bounds.z && StoP.y >= Pause_button_Resume_bounds.w) { buttonPressed = 1; } else if (StoP.x <= Pause_button_Replay_bounds.x && StoP.y <= Pause_button_Replay_bounds.y && StoP.x >= Pause_button_Replay_bounds.z && StoP.y >= Pause_button_Replay_bounds.w) { buttonPressed = 2; } else if (StoP.x <= Pause_button_QuitToMenu_bounds.x && StoP.y <= Pause_button_QuitToMenu_bounds.y && StoP.x >= Pause_button_QuitToMenu_bounds.z && StoP.y >= Pause_button_QuitToMenu_bounds.w) { buttonPressed = 3; } else if (StoP.x <= Pause_button_QuitToDesktop_bounds.x && StoP.y <= Pause_button_QuitToDesktop_bounds.y && StoP.x >= Pause_button_QuitToDesktop_bounds.z && StoP.y >= Pause_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+			if (StoP.x <= Pause_button_Resume_bounds.x && StoP.y <= Pause_button_Resume_bounds.y && StoP.x >= Pause_button_Resume_bounds.z && StoP.y >= Pause_button_Resume_bounds.w) { buttonPressed = 1; } 
+			else if (StoP.x <= Pause_button_Replay_bounds.x && StoP.y <= Pause_button_Replay_bounds.y && StoP.x >= Pause_button_Replay_bounds.z && StoP.y >= Pause_button_Replay_bounds.w) { buttonPressed = 2; } 
+			else if (StoP.x <= Pause_button_QuitToMenu_bounds.x && StoP.y <= Pause_button_QuitToMenu_bounds.y && StoP.x >= Pause_button_QuitToMenu_bounds.z && StoP.y >= Pause_button_QuitToMenu_bounds.w) { buttonPressed = 3; } 
+			else if (StoP.x <= Pause_button_QuitToDesktop_bounds.x && StoP.y <= Pause_button_QuitToDesktop_bounds.y && StoP.x >= Pause_button_QuitToDesktop_bounds.z && StoP.y >= Pause_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 			break;
 		case 2:
-			if (StoP.x <= Win_button_Replay_bounds.x && StoP.y <= Win_button_Replay_bounds.y && StoP.x >= Win_button_Replay_bounds.z && StoP.y >= Win_button_Replay_bounds.w) { buttonPressed = 2; } else if (StoP.x <= Win_button_QuitToMenu_bounds.x && StoP.y <= Win_button_QuitToMenu_bounds.y && StoP.x >= Win_button_QuitToMenu_bounds.z && StoP.y >= Win_button_QuitToMenu_bounds.w) { buttonPressed = 3; } else if (StoP.x <= Win_button_QuitToDesktop_bounds.x && StoP.y <= Win_button_QuitToDesktop_bounds.y && StoP.x >= Win_button_QuitToDesktop_bounds.z && StoP.y >= Win_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+			if (StoP.x <= Win_button_Replay_bounds.x && StoP.y <= Win_button_Replay_bounds.y && StoP.x >= Win_button_Replay_bounds.z && StoP.y >= Win_button_Replay_bounds.w) { buttonPressed = 2; } 
+			else if (StoP.x <= Win_button_QuitToMenu_bounds.x && StoP.y <= Win_button_QuitToMenu_bounds.y && StoP.x >= Win_button_QuitToMenu_bounds.z && StoP.y >= Win_button_QuitToMenu_bounds.w) { buttonPressed = 3; } 
+			else if (StoP.x <= Win_button_QuitToDesktop_bounds.x && StoP.y <= Win_button_QuitToDesktop_bounds.y && StoP.x >= Win_button_QuitToDesktop_bounds.z && StoP.y >= Win_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 			break;
 		case 3:
-			if (StoP.x <= Lose_button_Replay_bounds.x && StoP.y <= Lose_button_Replay_bounds.y && StoP.x >= Lose_button_Replay_bounds.z && StoP.y >= Lose_button_Replay_bounds.w) { buttonPressed = 2; } else if (StoP.x <= Lose_button_QuitToMenu_bounds.x && StoP.y <= Lose_button_QuitToMenu_bounds.y && StoP.x >= Lose_button_QuitToMenu_bounds.z && StoP.y >= Lose_button_QuitToMenu_bounds.w) { buttonPressed = 3; } else if (StoP.x <= Lose_button_QuitToDesktop_bounds.x && StoP.y <= Lose_button_QuitToDesktop_bounds.y && StoP.x >= Lose_button_QuitToDesktop_bounds.z && StoP.y >= Lose_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
+			if (StoP.x <= Lose_button_Replay_bounds.x && StoP.y <= Lose_button_Replay_bounds.y && StoP.x >= Lose_button_Replay_bounds.z && StoP.y >= Lose_button_Replay_bounds.w) { buttonPressed = 2; } 
+			else if (StoP.x <= Lose_button_QuitToMenu_bounds.x && StoP.y <= Lose_button_QuitToMenu_bounds.y && StoP.x >= Lose_button_QuitToMenu_bounds.z && StoP.y >= Lose_button_QuitToMenu_bounds.w) { buttonPressed = 3; } 
+			else if (StoP.x <= Lose_button_QuitToDesktop_bounds.x && StoP.y <= Lose_button_QuitToDesktop_bounds.y && StoP.x >= Lose_button_QuitToDesktop_bounds.z && StoP.y >= Lose_button_QuitToDesktop_bounds.w) { buttonPressed = 4; }
 			break;
 		}
 
+		std::cout << buttonPressed;
 		// Change Current Call Designation To Have The Scene Manager Change Scene
 		// See Line 67 In SceneManager
 		switch (buttonPressed) {
@@ -360,33 +437,12 @@ void TestLevel::HandleEvents(const SDL_Event& sdlEvent) {
 
 #pragma region Paddle
 	if (menuState == 0) { // If The Game Is Not Paused
-		int paddleDir = -1; // -1 = None, 0 = Left, 1 = Right, 2 = Both
 		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_LEFT) {
-			paddleDir = 0;
-		} else if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
-			// If The Left Arrow Was Not Pressed, Activate Only Right Paddles. Otherwiase, Activate All Paddles
-			paddleDir = (paddleDir == -1) ? 1 : 2;
-
+			paddle_Left->extended = true;
+		} 
+		if (sdlEvent.type == SDL_KEYDOWN && sdlEvent.key.keysym.scancode == SDL_SCANCODE_RIGHT) {
+			paddle_Right->extended = true;
 		}
-
-
-		/*
-		for (int i = 0; i < paddles.legth; i++) {
-			switch (paddleDir) {
-			case 0:
-				if (paddles[i]->GetDirection() == 0) { paddles[i]->Activate(); } // Activate Only Left Paddles
-				break;
-			case 1:
-				if (paddles[i]->GetDirection() == 1) { paddles[i]->Activate(); } // Activate Only Right Paddles
-				break;
-			case 0:
-				paddles[i]->Activate(); // Activate All Paddles
-				break;
-			default:
-				break;
-			}
-		}
-		*/
 	}
 #pragma endregion
 }
@@ -413,6 +469,7 @@ void TestLevel::Render() const {
 		// [] [] [] :: ::  <- health = 3/5
 		for (int i = 0; i < health; i++) { healthUI[i]->Render(); }
 		for (int i = 0; i < 5; i++) { timeUI[i]->Render(); }
+		for (int i = 0; i < 10; i++) { scoreUI[i]->Render(); }
 		gameplayUI->Render();
 		break;
 	case 1:
@@ -442,10 +499,18 @@ void TestLevel::RenderEntities() const {
 	glUniformMatrix4fv(ball->getShader()->getUniformID("viewMatrix"), 1, GL_FALSE, camera->getViewMatrix());
 	glUniform3fv(ball->getShader()->getUniformID("lightPos"), 1, lightSource_UI);
 
+	level_Roof->Render();
+
 	ball->Render();
-	affector->Render();
+	paddle_Left->Render();
+	paddle_Right->Render();
+	for (int i = 0; i < 5; i++) {
+		affector[i]->Render();
+	}
 	goal_Win->Render();
-	goal_Lose->Render();
+	//goal_Lose->Render();
+
+	level_Base->Render();
 }
 
 void TestLevel::OnDestroy() {

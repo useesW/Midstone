@@ -10,7 +10,7 @@ union SDL_Event;
 class Camera;
 class UIObject;
 class PinBall;
-//class Paddle
+class Paddle;
 class Affector;
 class Goal;
 
@@ -30,16 +30,17 @@ private:
 	*  4 = Begin Play
 	*/
 	int menuState = 4; // Always Starts With Begin Play Menu Active
+	bool bulletTime = false;
 
 	Camera* camera;
 	Vec3 lightSource_UI;
 
 	const static int maxHealth = 5;
-	const static int winScore = 100;
+	const static int winScore = 10;
 	int health = maxHealth;
 	int score = 0;
 	float timeremaining = 300.00;
-	Vec3 spawnLocation = Vec3(-1.5f,2.0f,0.0f);
+	Vec3 spawnLocation = Vec3(-1.65f, 3.0f, 0.0f);
 
 #pragma region UI
 	UIObject* menuUI_Pause;
@@ -48,6 +49,7 @@ private:
 	UIObject* beginPlayUI;
 	UIObject* gameplayUI;
 
+	UIObject* scoreUI[12];
 	UIObject* healthUI[maxHealth];
 	UIObject* timeUI[5];
 
@@ -62,6 +64,7 @@ private:
 	Texture* beginPlayUI_texturePtr;
 	Texture* gameplayUI_texturePtr;
 
+	Texture* scoreUI_texturePtr[9];
 	Texture* healthUI_texturePtr;
 	Texture* timeUI_texturePtr[10];
 
@@ -94,13 +97,20 @@ private:
 
 
 #pragma region Entities
+UIObject* level_Base;
+	UIObject* level_Roof;
+	Texture* level_Base_texturePtr;
+	Texture* level_Roof_texturePtr;
+
+
 	PinBall* ball;
 	Texture* ball_texturePtr;
 
-	// Paddles* paddles[x];
-	
-	Affector* affector;
-	//Affector* affectors[y];
+	Paddle* paddle_Left;
+	Paddle* paddle_Right;
+	Texture* paddle_texturePtr;
+
+	Affector* affector[5];
 	Texture* affector_Default_texturePtr;
 	Texture* affector_Hit_texturePtr;
 
@@ -110,7 +120,6 @@ private:
 	Texture* goal_WinState_texturePtr;
 	Texture* goal_Deactivated_texturePtr;
 	Texture* goal_LoseState_texturePtr__TEMP;
-
 #pragma endregion
 
 
@@ -129,6 +138,7 @@ public:
 	// Gameplay Methods
 	void UpdateHealth(int diff);
 	void UpdateTime(const float deltaTime);
+	void UpdateScore();
 	void RenderEntities() const;
 };
 

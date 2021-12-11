@@ -20,6 +20,7 @@ void PinBall::Update(float deltaTime_) {
 
 	//deltaTime_ = deltaTime_ * 0.1;
 	FixedUpdate(deltaTime_);
+	pos.z = 0.0f;
 
 	setModelMatrix(
 		// ***CHANGE Y & Z COMPONENTS * **
@@ -55,18 +56,18 @@ void PinBall::CalculateCollisions() {
 #pragma region Outer Bounds Collision Detection
 	if ((pos.x + collisionRadius) > gameBounds.x) {
 		pos.x += (gameBounds.x - (pos.x + collisionRadius));
-		vel.x *= -1;
+		vel.x *= -0.9;
 	} else if ((pos.x - collisionRadius) < -gameBounds.x) {
 		pos.x += (-gameBounds.x - (pos.x - collisionRadius));
-		vel.x *= -1;
+		vel.x *= -0.9;
 	}
 
 	if ((pos.y + collisionRadius) > gameBounds.y) {
 		pos.y += (gameBounds.y - (pos.y + collisionRadius));
-		vel.y *= -1;
-	} else if ((pos.y - collisionRadius) < -gameBounds.y) {
-		pos.y += (-gameBounds.y - (pos.y - collisionRadius));
-		vel.y *= -1;
+		vel.y *= -0.9;
+	} else if ((pos.y - collisionRadius) < -5) {
+		pos.y = 0.0f;
+		vel.y *= -0.9;
 	}
 #pragma endregion
 

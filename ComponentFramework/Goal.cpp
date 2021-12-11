@@ -45,7 +45,6 @@ void Goal::Render() const {
 }
 
 bool Goal::CalculateCollision(PinBall* ball) {
-	if (!activated) { return false; }
 	Vec2 displacementVector = Vec2();
 
 	if (ball != nullptr &&
